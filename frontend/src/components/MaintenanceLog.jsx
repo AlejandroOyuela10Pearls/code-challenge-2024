@@ -1,14 +1,43 @@
 import React, { useState } from "react";
-import { 
-  Card, CardHeader, CardBody, Table, 
-  TableHeader, TableColumn, TableBody, TableRow, 
-  TableCell, Pagination, Spacer 
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Pagination,
+  Spacer,
 } from "@nextui-org/react";
 
 const initialLogs = [
-  { id: 1, date: "2024-10-01", supportUser: "John Doe", device: "MacBook Pro", notes: "Replaced battery", condition: "Good" },
-  { id: 2, date: "2024-09-25", supportUser: "Jane Smith", device: "Dell XPS 13", notes: "Cleaned and reinstalled OS", condition: "Good" },
-  { id: 3, date: "2024-09-15", supportUser: "John Doe", device: "HP Spectre", notes: "Screen replacement", condition: "Repaired" },
+  {
+    id: 1,
+    date: "2024-10-01",
+    supportUser: "John Doe",
+    device: "MacBook Pro",
+    notes: "Replaced battery",
+    condition: "Good",
+  },
+  {
+    id: 2,
+    date: "2024-09-25",
+    supportUser: "Jane Smith",
+    device: "Dell XPS 13",
+    notes: "Cleaned and reinstalled OS",
+    condition: "Good",
+  },
+  {
+    id: 3,
+    date: "2024-09-15",
+    supportUser: "John Doe",
+    device: "HP Spectre",
+    notes: "Screen replacement",
+    condition: "Repaired",
+  },
 ];
 
 const MaintenanceLog = () => {
@@ -29,7 +58,10 @@ const MaintenanceLog = () => {
         </CardHeader>
 
         <CardBody>
-          <Table aria-label="Maintenance Log" css={{ height: "auto", minWidth: "100%" }}>
+          <Table
+            aria-label="Maintenance Log"
+            css={{ height: "auto", minWidth: "100%" }}
+          >
             <TableHeader>
               <TableColumn>Date</TableColumn>
               <TableColumn>Support User</TableColumn>

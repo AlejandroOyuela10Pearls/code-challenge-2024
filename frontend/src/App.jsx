@@ -1,18 +1,26 @@
 import "./App.css";
 
-import PageLoading from "./components/common/PageLoading";
 import AppRoutes from "./App.routes";
+import RouterWrapper from "./components/RouterWrapper";
+import PageLoading from "./components/common/PageLoading";
 
-import { Suspense } from "react";
+import { useState, Suspense } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Outlet } from "react-router-dom";
 
 function App() {
+  const [globalLoading, setGlobalLoading] = useState(false);
+
   return (
     <Router>
       <Suspense fallback={<PageLoading fixed />}>
         <NextUIProvider>
-          <AppRoutes />
+          <RouterWrapper globalLoading={globalLoading}>
+            <>
+              <AppRoutes setGlobalLoading={setGlobalLoading} />
+              <Outlet />
+            </>
+          </RouterWrapper>
         </NextUIProvider>
       </Suspense>
     </Router>
