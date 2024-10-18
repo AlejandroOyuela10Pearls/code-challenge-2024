@@ -18,11 +18,15 @@ export default {
         light: {
           colors: {
             primary: {
-              DEFAULT: "#294C60", // primary color
+              DEFAULT: "#56727C", // primary color
               foreground: "#FFFFFF",
             },
             secondary: {
-              DEFAULT: "#34E4EA", // secondary color
+              DEFAULT: "#415F69", // secondary color
+              foreground: "#FFFFFF",
+            },
+            overlay: {
+              DEFAULT: "#415F69",
               foreground: "#FFFFFF",
             },
           },

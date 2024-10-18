@@ -1,4 +1,5 @@
 import Header from "./common/Header";
+import SideBar from "./common/SideBar";
 import NewUserForm from "./NewUserForm";
 import Question from "./Question";
 import Dashboard from "./Dashboard";
@@ -17,15 +18,20 @@ const Home = () => {
       <PageLoading fixed />
     </div>
   ) : (
-    <div className="flex flex-col gap-3 items-center h-[100vh] p-[1rem]">
+    <div className="flex flex-col items-center h-[100vh] w-full">
       <Header />
-      {step === 0 && (
-        <UserManagement setStep={setStep} setIsLoading={setIsLoading} />
-      )}
-      {step === 1 && (
-        <NewUserForm setStep={setStep} setIsLoading={setIsLoading} />
-      )}
-      {step === 2 && <Question setStep={setStep} setIsLoading={setIsLoading} />}
+      <div className="flex w-full h-full">
+        <SideBar />
+        {step === 0 && (
+          <UserManagement setStep={setStep} setIsLoading={setIsLoading} />
+        )}
+        {step === 1 && (
+          <NewUserForm setStep={setStep} setIsLoading={setIsLoading} />
+        )}
+        {step === 2 && (
+          <Question setStep={setStep} setIsLoading={setIsLoading} />
+        )}
+      </div>
     </div>
   );
 };

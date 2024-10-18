@@ -1,20 +1,16 @@
 import Icon from "./Icon";
 
-import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
-
 const Header = () => {
   return (
-    <Navbar>
-      <NavbarBrand>
-        <Icon icon="fa-solid fa-bars" size="xl" />
-      </NavbarBrand>
-      <NavbarContent className="sm:flex gap-4" justify="center">
-        <p className="text-2xl">Device Tracking System</p>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        <Icon icon="fa-solid fa-circle-user" size="xl" />
-      </NavbarContent>
-    </Navbar>
+    <div className="flex justify-between w-full p-[1rem] bg-primary text-white">
+      <div className="flex flex-col items-start">
+        <p className="text-2xl font-bold">Device Tracking System</p>
+        <p className="text-xl">10Pearls</p>
+      </div>
+      <div className="flex justify-center items-center px-[1rem]">
+        <Icon icon="fa-solid fa-circle-user" size="2xl" />
+      </div>
+    </div>
   );
 };
 
