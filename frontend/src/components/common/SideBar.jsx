@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const SideBar = () => {
   return (
-    <section className="dark:bg-zinc-900 shadow-xl w-64 h-full overflow-auto p-6 border-[#ececec] border-r-4 bg-[#ebebeb]">
+    <section className="dark:bg-zinc-900 shadow-xl min-w-64 w-64 h-full overflow-auto p-6 border-[#ececec] border-r-4 bg-[#ebebeb]">
       <div className="flex flex-col h-full justify-between">
         <div className="grid gap-8">
           <Link to="/">

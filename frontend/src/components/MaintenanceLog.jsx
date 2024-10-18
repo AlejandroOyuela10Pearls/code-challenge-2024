@@ -51,7 +51,7 @@ const MaintenanceLog = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px" }} className="w-full">
       <Card style={{ width: "100%" }}>
         <CardHeader>
           <h3>Maintenance Log</h3>
