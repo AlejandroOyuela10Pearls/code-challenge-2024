@@ -3,8 +3,10 @@ import NewUserForm from "./NewUserForm";
 import Question from "./Question";
 import Dashboard from "./Dashboard";
 import PageLoading from "./common/PageLoading";
+import UserManagement from "./UserManagement";
 
 import { useState } from "react";
+import { User } from "@nextui-org/react";
 
 const Home = () => {
   const [step, setStep] = useState(0);
@@ -18,7 +20,7 @@ const Home = () => {
     <div className="flex flex-col gap-3 items-center h-[100vh] p-[1rem]">
       <Header />
       {step === 0 && (
-        <Dashboard setStep={setStep} setIsLoading={setIsLoading} />
+        <UserManagement setStep={setStep} setIsLoading={setIsLoading} />
       )}
       {step === 1 && (
         <NewUserForm setStep={setStep} setIsLoading={setIsLoading} />
