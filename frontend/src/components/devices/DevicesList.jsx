@@ -20,7 +20,7 @@ import DeviceCondition from "./DeviceCondition";
 
 const columns = [
   { name: "BRAND & MODEL", uid: "brandModel" },
-  { name: "SERIAL", uid: "serial" },
+  { name: "SERIAL NUMBER", uid: "serial" },
   { name: "CONDITION", uid: "condition" },
   { name: "ACTIONS", uid: "actions" },
 ];
