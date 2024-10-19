@@ -4,7 +4,9 @@ import { Routes, Route } from "react-router-dom";
 //const Home = lazy(() => import("./components/Home"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const UserManagement = lazy(() => import("./components/UserManagement"));
-const DeviceManagement = lazy(() => import("./components/devices/Index"));
+const DeviceManagement = lazy(() =>
+  import("./components/devices/DevicesIndex")
+);
 const MaintenanceLog = lazy(() => import("./components/MaintenanceLog"));
 
 const AppRoutes = ({ setGlobalLoading }) => {

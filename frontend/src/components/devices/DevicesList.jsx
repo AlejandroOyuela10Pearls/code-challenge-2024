@@ -6,8 +6,6 @@ import {
   TableRow,
   TableCell,
   Tooltip,
-  Button,
-  Chip,
   Spacer,
   Pagination,
   User,
@@ -16,11 +14,9 @@ import { useCallback, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
+import { deviceBrandImage } from "../../utils/DeviceParams";
 
-import appleLogo from "../../assets/brands/apple-logo.png";
-import dellLogo from "../../assets/brands/dell-logo.png";
-import asusLogo from "../../assets/brands/asus-logo.png";
-import hpLogo from "../../assets/brands/hp-logo.png";
+import DeviceCondition from "./DeviceCondition";
 
 const columns = [
   { name: "BRAND & MODEL", uid: "brandModel" },
@@ -28,20 +24,6 @@ const columns = [
   { name: "CONDITION", uid: "condition" },
   { name: "ACTIONS", uid: "actions" },
 ];
-
-const statusTextMap = {
-  new: "New",
-  used: "Used",
-  underRepair: "Under Repair",
-  defective: "Defective",
-};
-
-const statusColorMap = {
-  new: "success",
-  used: "secondary",
-  underRepair: "warning",
-  defective: "danger",
-};
 
 const initialDevices = [
   {
@@ -98,25 +80,8 @@ const initialDevices = [
   },
 ];
 
-const List = () => {
+const DevicesList = ({ setSelectedDevice }) => {
   const [devices, setDevices] = useState(initialDevices);
-
-  const selectBrandImg = useCallback((device) => {
-    const { brand } = device;
-    const target = brand?.toLowerCase();
-    switch (target) {
-      case "apple":
-        return appleLogo;
-      case "dell":
-        return dellLogo;
-      case "asus":
-        return asusLogo;
-      case "hp":
-        return hpLogo;
-      default:
-        return null;
-    }
-  }, []);
 
   const renderCell = useCallback((device, columnKey) => {
     const cellValue = device[columnKey];
@@ -125,7 +90,7 @@ const List = () => {
       case "brandModel":
         return (
           <User
-            avatarProps={{ className: "bg-red", src: selectBrandImg(device) }}
+            avatarProps={{ className: "bg-red", src: deviceBrandImage(device) }}
             description={device.model}
             name={device.brand}
           >
@@ -139,21 +104,15 @@ const List = () => {
           </div>
         );
       case "condition":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[cellValue]}
-            size="sm"
-            variant="flat"
-          >
-            {statusTextMap[cellValue]}
-          </Chip>
-        );
+        return <DeviceCondition device={device} />;
       case "actions":
         return (
           <div className="relative flex items-center justify-center gap-4">
             <Tooltip content="More details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => setSelectedDevice(device)}
+              >
                 <EyeIcon />
               </span>
             </Tooltip>
@@ -205,4 +164,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default DevicesList;
