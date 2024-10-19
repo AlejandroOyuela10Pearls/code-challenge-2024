@@ -13,7 +13,7 @@ function App() {
 
   return (
     <Router>
-      <Suspense fallback={<PageLoading fixed />}>
+      <Suspense>
         <NextUIProvider>
           <RouterWrapper globalLoading={globalLoading}>
             <>

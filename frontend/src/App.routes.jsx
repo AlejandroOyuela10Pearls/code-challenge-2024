@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 //const Home = lazy(() => import("./components/Home"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const UserManagement = lazy(() => import("./components/UserManagement"));
+const DeviceManagement = lazy(() => import("./components/devices/Index"));
 const MaintenanceLog = lazy(() => import("./components/MaintenanceLog"));
 
 const AppRoutes = ({ setGlobalLoading }) => {
@@ -17,7 +18,10 @@ const AppRoutes = ({ setGlobalLoading }) => {
         path="/"
         element={<Dashboard setGlobalLoading={setGlobalLoading} />}
       />
-      <Route path="/devices" element={<p>Devices is comming</p>} />
+      <Route
+        path="/devices"
+        element={<DeviceManagement setGlobalLoading={setGlobalLoading} />}
+      />
       <Route
         path="/users"
         element={<UserManagement setGlobalLoading={setGlobalLoading} />}
