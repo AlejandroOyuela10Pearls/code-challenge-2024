@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "e84ad82b-dd5b-4183-9a54-6b4bc9a2f3f1",
+		"name": "Api User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37263070"
+	},
+	"item": [
+		{
+			"name": "Save user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Juan Pérez\",\n    \"email\": \"juan.perez@example.com\",\n    \"role\": \"Standard User\",\n    \"active\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/listUsers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"listUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Juan Lopez\",\n    \"email\": \"juan.perez@example.com\",\n    \"role\": \"Standard User\",\n    \"active\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/update?id=e033e806-48e6-4f73-bd45-b522861847de",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "e033e806-48e6-4f73-bd45-b522861847de"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user status",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/update-status?id=e033e806-48e6-4f73-bd45-b522861847de&isActive=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"update-status"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "e033e806-48e6-4f73-bd45-b522861847de"
+						},
+						{
+							"key": "isActive",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

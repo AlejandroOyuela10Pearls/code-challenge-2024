@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "10f3f219-78b5-48a2-b693-b364a922503a",
+		"name": "Api Device",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37263070"
+	},
+	"item": [
+		{
+			"name": "Save Device",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"serialNumber\": \"SN9099\",\n    \"brand\": \"Mac\",\n    \"model\": \"M2\",\n    \"hardDrive\": \"512 GB SSD\",\n    \"ram\": \"16 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all device",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/listAll",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"listAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"serialNumber\": \"SN90989\",\n    \"brand\": \"Mac\",\n    \"model\": \"M2\",\n    \"hardDrive\": \"1024 GB SSD\",\n    \"ram\": \"64 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/update?id=4d9a7491-1cb7-4edd-a860-cb6d97ccdac9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "4d9a7491-1cb7-4edd-a860-cb6d97ccdac9"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
