@@ -1,5 +1,6 @@
 import moment from "moment";
 import DeviceCondition from "./DeviceCondition";
+import DeviceBrandImg from "./DeviceBrandImg";
 
 import {
   Button,
@@ -8,13 +9,17 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  User,
 } from "@nextui-org/react";
-import { deviceBrandImage } from "../../utils/DeviceParams";
 
 const DevicesDetails = ({ isOpen, onClose, device }) => {
   return (
-    <Modal size="md" backdrop="opaque" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="md"
+      backdrop="opaque"
+      isDismissable={false}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalContent>
         <ModalHeader>Device Details</ModalHeader>
         <ModalBody className="flex flex-col gap-4">
@@ -91,14 +96,7 @@ const DevicesDetails = ({ isOpen, onClose, device }) => {
           </div>
         </ModalBody>
         <ModalFooter className="flex justify-between">
-          {device && (
-            <User
-              avatarProps={{
-                className: "bg-red",
-                src: deviceBrandImage(device),
-              }}
-            />
-          )}
+          {device && <DeviceBrandImg device={device} />}
           <Button color="danger" variant="light" onPress={onClose}>
             Close
           </Button>

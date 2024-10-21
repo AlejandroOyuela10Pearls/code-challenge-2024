@@ -8,15 +8,14 @@ import {
   Tooltip,
   Spacer,
   Pagination,
-  User,
 } from "@nextui-org/react";
-import { useCallback, useState } from "react";
+import { useCallback, useDebugValue, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
-import { deviceBrandImage } from "../../utils/DeviceParams";
 
 import DeviceCondition from "./DeviceCondition";
+import DeviceBrandImg from "./DeviceBrandImg";
 
 const columns = [
   { name: "BRAND & MODEL", uid: "brandModel" },
@@ -28,7 +27,7 @@ const columns = [
 const initialDevices = [
   {
     id: 1,
-    brand: "Dell",
+    brand: "dell",
     model: "G15",
     serial: "ABCDEF123456",
     condition: "new",
@@ -41,7 +40,7 @@ const initialDevices = [
   },
   {
     id: 2,
-    brand: "Apple",
+    brand: "apple",
     model: "Mackbook Pro",
     serial: "APPLE421646",
     condition: "used",
@@ -54,7 +53,7 @@ const initialDevices = [
   },
   {
     id: 3,
-    brand: "HP",
+    brand: "hp",
     model: "HP132",
     serial: "ABCDEF12345677",
     condition: "underRepair",
@@ -67,7 +66,7 @@ const initialDevices = [
   },
   {
     id: 4,
-    brand: "Asus",
+    brand: "asus",
     model: "AUS123",
     serial: "ABCDEF123456",
     condition: "defective",
@@ -80,7 +79,7 @@ const initialDevices = [
   },
 ];
 
-const DevicesList = ({ setSelectedDevice }) => {
+const DevicesList = ({ setSelectedDevice, setDeviceFormData }) => {
   const [devices, setDevices] = useState(initialDevices);
 
   const renderCell = useCallback((device, columnKey) => {
@@ -89,13 +88,12 @@ const DevicesList = ({ setSelectedDevice }) => {
     switch (columnKey) {
       case "brandModel":
         return (
-          <User
-            avatarProps={{ className: "bg-red", src: deviceBrandImage(device) }}
+          <DeviceBrandImg
+            device={device}
             description={device.model}
             name={device.brand}
-          >
-            {device.model}
-          </User>
+            model={device.model}
+          />
         );
       case "serial":
         return (
@@ -117,7 +115,10 @@ const DevicesList = ({ setSelectedDevice }) => {
               </span>
             </Tooltip>
             <Tooltip content="Edit device">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => setDeviceFormData(device)}
+              >
                 <EditIcon />
               </span>
             </Tooltip>

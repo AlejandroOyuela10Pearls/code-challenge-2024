@@ -1,53 +1,46 @@
 import Icon from "../common/Icon";
-import React from "react";
+import React, { useEffect } from "react";
 import DevicesList from "./DevicesList";
 import DevicesDetails from "./DevicesDetails";
+import DeviceForm from "./DeviceForm";
 
 import { useState } from "react";
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
 
 const DevicesIndex = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
-  //const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [deviceFormData, setDeviceFormData] = useState(null);
+  const [newDeviceData, setNewDeviceData] = useState(null);
 
-  const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    role: "Standard User",
-    active: true,
-  });
+  const setNewDeviceFormData = () => {
+    setDeviceFormData({
+      id: 0,
+      brand: null,
+      model: "",
+      serial: "",
+      condition: "",
+      hdd: "",
+      ram: "",
+      gpu: "",
+      cpu: "",
+      notes: "",
+      creation_date: "",
+    });
+  };
 
-  /*const handleSaveUser = () => {
-    if (selectedUser) {
-      setDevices((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === selectedUser.id ? { ...user, ...newUser } : user
-        )
-      );
-    } else {
-      setDevices((prevUsers) => [
-        ...prevUsers,
-        { id: devices.length + 1, ...newUser },
-      ]);
+  useEffect(() => {
+    if (newDeviceData) {
+      console.log("newDeviceData", newDeviceData);
+
+      const isNew = newDeviceData.id === 0;
+      if (isNew) {
+        // POST NEW DATA
+      } else {
+        // UPDATE NEW DATA
+      }
+      // RELOAD TABLE
     }
-    onOpenChange();
-    setSelectedUser(null);
-    setNewUser({ name: "", email: "", role: "Standard User", active: true });
-  };
-
-  const handleEditUser = (user) => {
-    setSelectedUser(user);
-    setNewUser(user);
-    onOpen();
-  };
-
-  const handleToggleStatus = (userId) => {
-    setDevices((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, active: !user.active } : user
-      )
-    );
-  };*/
+  }, [newDeviceData]);
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
@@ -60,7 +53,7 @@ const DevicesIndex = () => {
           <Button
             auto
             color="primary"
-            onPress={() => console.log("add new device")}
+            onPress={() => setNewDeviceFormData()}
             style={{ borderRadius: "10px" }}
           >
             Add New Device
@@ -68,13 +61,24 @@ const DevicesIndex = () => {
         </CardHeader>
 
         <CardBody>
-          <DevicesList setSelectedDevice={setSelectedDevice} />
+          <DevicesList
+            setSelectedDevice={setSelectedDevice}
+            setDeviceFormData={setDeviceFormData}
+          />
         </CardBody>
       </Card>
       <DevicesDetails
         isOpen={!!selectedDevice}
         onClose={() => setSelectedDevice(null)}
         device={selectedDevice}
+      />
+      <DeviceForm
+        isOpen={!!deviceFormData}
+        onClose={(device) => {
+          setNewDeviceData(device);
+          setDeviceFormData(null);
+        }}
+        selectedDevice={deviceFormData}
       />
     </div>
   );
