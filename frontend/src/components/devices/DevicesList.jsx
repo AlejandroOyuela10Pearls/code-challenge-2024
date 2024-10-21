@@ -79,7 +79,11 @@ const initialDevices = [
   },
 ];
 
-const DevicesList = ({ setSelectedDevice, setDeviceFormData }) => {
+const DevicesList = ({
+  setSelectedDevice,
+  setDeviceFormData,
+  setDeleteDevice,
+}) => {
   const [devices, setDevices] = useState(initialDevices);
 
   const renderCell = useCallback((device, columnKey) => {
@@ -123,7 +127,10 @@ const DevicesList = ({ setSelectedDevice, setDeviceFormData }) => {
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete device">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+                onClick={() => setDeleteDevice(device)}
+              >
                 <DeleteIcon />
               </span>
             </Tooltip>

@@ -254,7 +254,7 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
               variant="light"
               onPress={() => handleSubmit()}
             >
-              Close
+              Cancel
             </Button>
             <Button
               color="primary"

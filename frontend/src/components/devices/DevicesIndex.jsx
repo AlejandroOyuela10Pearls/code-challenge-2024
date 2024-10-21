@@ -1,16 +1,19 @@
+import React from "react";
 import Icon from "../common/Icon";
-import React, { useEffect } from "react";
 import DevicesList from "./DevicesList";
 import DevicesDetails from "./DevicesDetails";
 import DeviceForm from "./DeviceForm";
+import TwoButtonsModal from "../common/TwoButtonsModal";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
+import { brandList } from "../../utils/DeviceParams";
 
 const DevicesIndex = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [deviceFormData, setDeviceFormData] = useState(null);
   const [newDeviceData, setNewDeviceData] = useState(null);
+  const [deleteDevice, setDeleteDevice] = useState(null);
 
   const setNewDeviceFormData = () => {
     setDeviceFormData({
@@ -28,6 +31,12 @@ const DevicesIndex = () => {
     });
   };
 
+  const handleDeleteDevice = () => {
+    // DELETE SELECTED DEVICE
+    // RELOAD TABLE
+    setDeleteDevice(null);
+  };
+
   useEffect(() => {
     if (newDeviceData) {
       console.log("newDeviceData", newDeviceData);
@@ -41,6 +50,14 @@ const DevicesIndex = () => {
       // RELOAD TABLE
     }
   }, [newDeviceData]);
+
+  const deleteDeviceBrand = useCallback(() => {
+    if (deleteDevice) {
+      const targetBrand = brandList.find((x) => x.key === deleteDevice?.brand);
+      return targetBrand.label;
+    }
+    return "";
+  }, [brandList, deleteDevice]);
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
@@ -64,6 +81,7 @@ const DevicesIndex = () => {
           <DevicesList
             setSelectedDevice={setSelectedDevice}
             setDeviceFormData={setDeviceFormData}
+            setDeleteDevice={setDeleteDevice}
           />
         </CardBody>
       </Card>
@@ -79,6 +97,15 @@ const DevicesIndex = () => {
           setDeviceFormData(null);
         }}
         selectedDevice={deviceFormData}
+      />
+      <TwoButtonsModal
+        isOpen={!!deleteDevice}
+        onClose={() => setDeleteDevice(null)}
+        title={`Delete device ${deleteDeviceBrand()} ${deleteDevice?.model}`}
+        description={`Are you sure to delete the device with Serial Number ${deleteDevice?.serial}?`}
+        actionBtn={() => handleDeleteDevice()}
+        closeText="Cancel"
+        actionText="Delete"
       />
     </div>
   );
