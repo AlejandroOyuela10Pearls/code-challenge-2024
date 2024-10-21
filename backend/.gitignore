@@ -1,3 +1,31 @@
 node_modules
 dist
 out
+
+# Archivos de compilación de IntelliJ
+*.iml
+.idea/
+out/
+*.class
+
+# Archivos de log
+*.log
+
+# Archivos de paquetes
+*.jar
+*.war
+*.ear
+
+# Archivos de dependencias de Gradle
+.gradle/
+build/
+
+# Archivos de dependencias de Maven
+target/
+
+# Archivos de configuración del sistema
+.DS_Store
+Thumbs.db
+
+# Otros archivos de configuración
+*.class
