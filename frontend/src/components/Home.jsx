@@ -1,5 +1,5 @@
 import NewUserForm from "./NewUserForm";
-import UserManagement from "./UserManagement";
+import UserManagement from "./Users/UserManagement";
 
 import { useState } from "react";
 

@@ -77,7 +77,7 @@ const Dashboard = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px" }} className="w-full">
       <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
         <Card style={{ flex: 1 }}>
           <CardHeader>
@@ -143,55 +143,6 @@ const Dashboard = () => {
           </CardBody>
         </Card>
       </div>
-
-      {/* Buttons Centered Below Cards */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          color="primary"
-          onPress={onOpen}
-          auto
-          style={{ borderRadius: "10px" }}
-        >
-          Add New Device
-        </Button>
-        <Button color="primary" auto style={{ borderRadius: "10px" }}>
-          Assign Device
-        </Button>
-        <Button color="default" auto style={{ borderRadius: "10px" }}>
-          View Maintenance Logs
-        </Button>
-      </div>
-
-      <Modal backdrop="opaque" isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Add New Device</ModalHeader>
-              <ModalBody>
-                <p>
-                  Enter details for the new device such as Serial Number, Brand,
-                  Model, etc.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Add Device
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 };

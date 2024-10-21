@@ -11,8 +11,11 @@ import {
   TableCell,
   Pagination,
   Spacer,
+  Chip,
 } from "@nextui-org/react";
+import { maintenanceConditionTextMap, maintenanceConditionColorMap } from "../utils/MaintenanceParams";
 
+// Sample maintenance logs
 const initialLogs = [
   {
     id: 1,
@@ -20,7 +23,7 @@ const initialLogs = [
     supportUser: "John Doe",
     device: "MacBook Pro",
     notes: "Replaced battery",
-    condition: "Good",
+    condition: "repaired",
   },
   {
     id: 2,
@@ -28,7 +31,7 @@ const initialLogs = [
     supportUser: "Jane Smith",
     device: "Dell XPS 13",
     notes: "Cleaned and reinstalled OS",
-    condition: "Good",
+    condition: "InMaintenance",
   },
   {
     id: 3,
@@ -36,7 +39,7 @@ const initialLogs = [
     supportUser: "John Doe",
     device: "HP Spectre",
     notes: "Screen replacement",
-    condition: "Repaired",
+    condition: "defective",
   },
 ];
 
@@ -45,6 +48,7 @@ const MaintenanceLog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Calculate the displayed logs based on pagination
   const displayedLogs = logs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -63,7 +67,7 @@ const MaintenanceLog = () => {
             css={{ height: "auto", minWidth: "100%" }}
           >
             <TableHeader>
-              <TableColumn>Date</TableColumn>
+              <TableColumn>Date (YYYY/MM/DD)</TableColumn>
               <TableColumn>Support User</TableColumn>
               <TableColumn>Device</TableColumn>
               <TableColumn>Notes</TableColumn>
@@ -76,13 +80,21 @@ const MaintenanceLog = () => {
                   <TableCell>{log.supportUser}</TableCell>
                   <TableCell>{log.device}</TableCell>
                   <TableCell>{log.notes}</TableCell>
-                  <TableCell>{log.condition}</TableCell>
+                  <TableCell>
+                    <Chip
+                      className="capitalize"
+                      color={maintenanceConditionColorMap[log.condition]}
+                      size="sm"
+                      variant="flat"
+                    >
+                      {maintenanceConditionTextMap[log.condition]}
+                    </Chip>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
           <Spacer y={1} />
-
           <Pagination
             total={Math.ceil(logs.length / itemsPerPage)}
             initialPage={1}
