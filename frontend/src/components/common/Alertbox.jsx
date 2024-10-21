@@ -36,7 +36,6 @@ const AlertBox = ({
   extraClasses,
   type = 'info',
   autoHide = false,
-  showContact = false,
   showCloseButton = true,
   onClosed = () => {},
   children,
@@ -122,7 +121,7 @@ const AlertBox = ({
           aria-label="Close alert"
           type="button"
         >
-          <Icon icon={['fas', 'x']} className="text-gray-500 text-sm" />
+          <Icon icon={['fas', 'xmark']} className="text-gray-500 text-sm" />
         </button>
       )}
     </div>
