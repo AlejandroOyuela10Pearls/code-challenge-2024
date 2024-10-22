@@ -8,6 +8,7 @@ const DeviceManagement = lazy(() =>
   import("./components/devices/DevicesIndex")
 );
 const MaintenanceLog = lazy(() => import("./components/MaintenanceLog"));
+const Search = lazy(() => import("./components/Search"));
 
 const AppRoutes = ({ setGlobalLoading }) => {
   return (
@@ -33,7 +34,9 @@ const AppRoutes = ({ setGlobalLoading }) => {
         element={<MaintenanceLog setGlobalLoading={setGlobalLoading} />}
       />
       <Route path="/assignments" element={<p>Assignments is comming</p>} />
-      <Route path="/search" element={<p>Search is comming</p>} />
+      <Route path="/search" 
+      element={<Search setGlobalLoading={setGlobalLoading} />}
+       />
     </Routes>
   );
 };

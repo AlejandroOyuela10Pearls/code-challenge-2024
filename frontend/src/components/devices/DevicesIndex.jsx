@@ -1,63 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../common/Icon";
 import DevicesList from "./DevicesList";
 import DevicesDetails from "./DevicesDetails";
 import DeviceForm from "./DeviceForm";
 import TwoButtonsModal from "../common/TwoButtonsModal";
-
-import { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
-import { brandList } from "../../utils/DeviceParams";
+import axios from "axios";
 
 const DevicesIndex = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [deviceFormData, setDeviceFormData] = useState(null);
   const [newDeviceData, setNewDeviceData] = useState(null);
   const [deleteDevice, setDeleteDevice] = useState(null);
-
-  const setNewDeviceFormData = () => {
-    setDeviceFormData({
-      id: 0,
-      brand: null,
-      model: "",
-      serial: "",
-      condition: "",
-      hdd: "",
-      ram: "",
-      gpu: "",
-      cpu: "",
-      notes: "",
-      creation_date: "",
-    });
-  };
-
-  const handleDeleteDevice = () => {
-    // DELETE SELECTED DEVICE
-    // RELOAD TABLE
-    setDeleteDevice(null);
-  };
+  const [devices, setDevices] = useState([]); 
+  const deviceApiUrl = import.meta.env.VITE_DEVICE_API_URL;
 
   useEffect(() => {
-    if (newDeviceData) {
-      console.log("newDeviceData", newDeviceData);
+    fetchDevices();
+  }, []);
 
-      const isNew = newDeviceData.id === 0;
-      if (isNew) {
-        // POST NEW DATA
-      } else {
-        // UPDATE NEW DATA
+  const fetchDevices = async () => {
+    try {
+      const response = await axios.get(`${deviceApiUrl}/listAll`);
+      if (Array.isArray(response.data)) {
+        setDevices(response.data); 
+        console.log("Devices fetched from API:", response.data);
       }
-      // RELOAD TABLE
+    } catch (error) {
+      console.error("Error fetching devices:", error);
     }
-  }, [newDeviceData]);
-
-  const deleteDeviceBrand = useCallback(() => {
-    if (deleteDevice) {
-      const targetBrand = brandList.find((x) => x.key === deleteDevice?.brand);
-      return targetBrand.label;
-    }
-    return "";
-  }, [brandList, deleteDevice]);
+  };
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
@@ -70,7 +42,21 @@ const DevicesIndex = () => {
           <Button
             auto
             color="primary"
-            onPress={() => setNewDeviceFormData()}
+            onPress={() =>
+              setDeviceFormData({
+                id: 0,
+                brand: "",
+                model: "",
+                serialNumber: "",
+                condition: "",
+                hardDrive: "",
+                ram: "",
+                gpu: "",
+                cpu: "",
+                notes: "",
+                addedAt: "",
+              })
+            }
             style={{ borderRadius: "10px" }}
           >
             Add New Device
@@ -79,6 +65,7 @@ const DevicesIndex = () => {
 
         <CardBody>
           <DevicesList
+            devices={devices}
             setSelectedDevice={setSelectedDevice}
             setDeviceFormData={setDeviceFormData}
             setDeleteDevice={setDeleteDevice}
@@ -101,9 +88,9 @@ const DevicesIndex = () => {
       <TwoButtonsModal
         isOpen={!!deleteDevice}
         onClose={() => setDeleteDevice(null)}
-        title={`Delete device ${deleteDeviceBrand()} ${deleteDevice?.model}`}
-        description={`Are you sure to delete the device with Serial Number ${deleteDevice?.serial}?`}
-        actionBtn={() => handleDeleteDevice()}
+        title={`Delete device ${deleteDevice?.brand} ${deleteDevice?.model}`}
+        description={`Are you sure to delete the device with Serial Number ${deleteDevice?.serialNumber}?`}
+        actionBtn={() => {}}
         closeText="Cancel"
         actionText="Delete"
       />

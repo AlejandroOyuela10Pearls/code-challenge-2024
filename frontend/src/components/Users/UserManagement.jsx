@@ -1,18 +1,30 @@
-import { useState } from "react"; 
+import { useState, useEffect } from "react"; 
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
 import UserList from "./UserList";
 import Icon from "../common/Icon";
+import axios from 'axios';
 import AddNewUserForm from "./AddNewUserForm";
 
-const initialUsers = [
-  { id: 1, name: "John Doe", email: "john.doe@example.com", role: "Support User", active: true },
-  { id: 2, name: "Jane Smith", email: "jane.smith@example.com", role: "Standard User", active: false },
-];
-
 const UserManagementIndex = () => {
-  const [users, setUsers] = useState(initialUsers); 
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); 
-  const [isFormOpen, setIsFormOpen] = useState(false); 
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const userApiUrl = import.meta.env.VITE_USER_API_URL;
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`${userApiUrl}/listUsers`);
+      if (response.data.result) {
+        setUsers(response.data.result); 
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const handleSaveUser = (newUser) => {
     if (selectedUser) {
@@ -37,8 +49,8 @@ const UserManagementIndex = () => {
   };
 
   const handleAddNewUser = () => {
-    setSelectedUser(null);  // Reset selectedUser when adding a new user
-    setIsFormOpen(true);    // Open the form modal
+    setSelectedUser(null);
+    setIsFormOpen(true); 
   };
 
   const handleToggleStatus = (userId) => {
@@ -53,14 +65,14 @@ const UserManagementIndex = () => {
     <div style={{ padding: "20px" }} className="w-full">
       <Card style={{ width: "100%" }}>
         <CardHeader className="justify-between">
-        <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center">
             <Icon icon="fa-solid fa-users" size="xl" />
             <p className="text-[24px]">User Management</p>
           </div>
           <Button
             auto
             color="primary"
-            onPress={handleAddNewUser}  // Call handleAddNewUser on button click
+            onPress={handleAddNewUser} 
             style={{ borderRadius: "10px" }}
           >
             Add New User
@@ -76,7 +88,6 @@ const UserManagementIndex = () => {
         </CardBody>
       </Card>
 
-      {/* Call AddNewUserForm component */}
       <AddNewUserForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
