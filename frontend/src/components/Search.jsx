@@ -22,16 +22,20 @@ const SearchComponent = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`${process.env.VITE_APP_DEVICE_API_URL}/listAll`, {
+      const response = await axios.get(`${import.meta.env.VITE_DEVICE_API_URL}/listAll`, {
         params: {
           searchText: searchParams.searchText,
           brand: selectedBrandValue !== "All Brands" ? selectedBrandValue : "",
           model: selectedModelValue !== "All Models" ? selectedModelValue : "",
           user: selectedUserValue !== "All Users" ? selectedUserValue : "",
-        }
+        },
       });
   
-      setSearchResults(response.data);
+      if (Array.isArray(response.data)) {
+        setSearchResults(response.data);
+      } else {
+        setSearchResults([]); 
+      }
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
