@@ -12,4 +12,6 @@ public interface DeviceManagementRepository extends ReactiveMongoRepository<Devi
 
     Mono<Device> findBySerialNumber(String serialNumber);
 
+
+
 }

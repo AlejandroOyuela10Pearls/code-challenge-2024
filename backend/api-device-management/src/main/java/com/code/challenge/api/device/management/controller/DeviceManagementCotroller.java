@@ -1,7 +1,9 @@
 package com.code.challenge.api.device.management.controller;
 
 import com.code.challenge.api.device.management.model.request.DeviceRequest;
+import com.code.challenge.api.device.management.model.request.MaintenanceRequest;
 import com.code.challenge.api.device.management.service.DeviceManagementService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,7 +19,7 @@ public class DeviceManagementCotroller {
     }
 
     @PostMapping("/save")
-    public Mono<Object> createDevice(@RequestBody DeviceRequest request) {
+    public Mono<?> createDevice(@RequestBody DeviceRequest request) {
         return service.saveDevice(request);
     }
 
@@ -31,4 +33,14 @@ public class DeviceManagementCotroller {
                                @RequestBody DeviceRequest request) {
         return service.updateDevice(id, request);
     }
+
+
+    @PostMapping("/maintenance")
+    public Mono<?> addMaintenance
+            (@RequestParam("id") String id, @RequestBody MaintenanceRequest maintenance) {
+        return service.addMaintenanceRecord(id, maintenance)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -28,4 +29,5 @@ public class Device {
     private String notes;            // Additional information about the device
     private Date addedAt;            // Date the device was added to the system
     private String condition;         // Current condition of the device (e.g., new, used, under repair)
+    private List<Maintenance> maintenances;
 }

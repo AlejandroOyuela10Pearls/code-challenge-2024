@@ -2,8 +2,11 @@ package com.code.challenge.api.device.management.service;
 
 import com.code.challenge.api.device.management.exception.BusinessException;
 import com.code.challenge.api.device.management.model.Device;
+import com.code.challenge.api.device.management.model.Maintenance;
 import com.code.challenge.api.device.management.model.request.DeviceRequest;
+import com.code.challenge.api.device.management.model.request.MaintenanceRequest;
 import com.code.challenge.api.device.management.model.response.ApiResponse;
+import com.code.challenge.api.device.management.repository.DeviceCustomRepository;
 import com.code.challenge.api.device.management.repository.DeviceManagementRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,12 +20,14 @@ import java.util.UUID;
 public class DeviceManagementService {
 
     private final DeviceManagementRepository repository;
+    private final DeviceCustomRepository deviceCustomRepository;
 
-    public DeviceManagementService(DeviceManagementRepository repository) {
+    public DeviceManagementService(DeviceManagementRepository repository, DeviceCustomRepository deviceCustomRepository) {
         this.repository = repository;
+        this.deviceCustomRepository = deviceCustomRepository;
     }
 
-    public Mono<Object> saveDevice(DeviceRequest request) {
+    public Mono<?> saveDevice(DeviceRequest request) {
         return repository.findBySerialNumber(request.getSerialNumber())
                 .flatMap(existingDevice -> Mono.error(new BusinessException("El serial number ya existe.")))
                 .switchIfEmpty(Mono.defer(() -> {
@@ -46,7 +51,7 @@ public class DeviceManagementService {
     }
 
 
-    public Mono<ApiResponse<Device>> updateDevice(String id, DeviceRequest request) {
+    public Mono<?> updateDevice(String id, DeviceRequest request) {
         return repository.findById(UUID.fromString(id))
                 .flatMap(existingDevice -> {
                     existingDevice.setId(UUID.fromString(id));
@@ -70,5 +75,19 @@ public class DeviceManagementService {
 
     public Flux<Device> listAll(){
         return repository.findAll();
+    }
+
+    public Mono<?> addMaintenanceRecord(String deviceId, MaintenanceRequest request) {
+
+        Maintenance maintenance = Maintenance.builder()
+                .supportUser(request.getSupportUser())
+                .device(request.getDevice())
+                .date(request.getDate())
+                .id(UUID.randomUUID())
+                .notes(request.getNotes())
+                .currentCondition(request.getCurrentCondition())
+                .build();
+
+        return deviceCustomRepository.addMaintenance(UUID.fromString(deviceId), maintenance);
     }
 }

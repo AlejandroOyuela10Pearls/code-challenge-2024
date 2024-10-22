@@ -95,6 +95,43 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add Maintenance",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"date\": \"2023-10-21\",\n    \"supportUser\": \"Juan Pérez\",\n    \"notes\": \"Cambio pantalla\",\n    \"currentCondition\": \"Todo bien\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/maintenance?id=f10bc2b6-3cf5-49d6-81b5-825bda4ccfa3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"maintenance"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "f10bc2b6-3cf5-49d6-81b5-825bda4ccfa3"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
