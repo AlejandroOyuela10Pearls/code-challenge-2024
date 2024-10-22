@@ -2,6 +2,16 @@ import { useState } from "react";
 import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spacer, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import axios from "axios";
 import Icon from "./common/Icon"; 
+import Fuse from "fuse.js";
+
+const brands = ["Apple", "Dell", "HP", "Mac, Lenovo"];
+const models = ["G15", "Mackbook Pro", "HP132", "M2"];
+const users = ["Standard User", "Support User", "Admin User"];
+
+const fuseOptions = {
+  includeScore: true,
+  threshold: 0.3,  
+};
 
 const SearchComponent = () => {
   const [searchParams, setSearchParams] = useState({
@@ -20,14 +30,30 @@ const SearchComponent = () => {
   const selectedModelValue = Array.from(selectedModel).join(", ");
   const selectedUserValue = Array.from(selectedUser).join(", ");
 
+  const brandFuse = new Fuse(brands, fuseOptions);
+  const modelFuse = new Fuse(models, fuseOptions);
+  const userFuse = new Fuse(users, fuseOptions);
+
+  const getCorrectedValue = (value, fuseInstance, defaultValue) => {
+    if (value && value !== defaultValue) {
+      const result = fuseInstance.search(value);
+      return result.length > 0 ? result[0].item : value;
+    }
+    return value;
+  };
+
   const handleSearch = async () => {
+    const correctedBrand = getCorrectedValue(selectedBrandValue, brandFuse, "All Brands");
+    const correctedModel = getCorrectedValue(selectedModelValue, modelFuse, "All Models");
+    const correctedUser = getCorrectedValue(selectedUserValue, userFuse, "All Users");
+
     try {
       const response = await axios.get(`${import.meta.env.VITE_DEVICE_API_URL}/listAll`, {
         params: {
           searchText: searchParams.searchText,
-          brand: selectedBrandValue !== "All Brands" ? selectedBrandValue : "",
-          model: selectedModelValue !== "All Models" ? selectedModelValue : "",
-          user: selectedUserValue !== "All Users" ? selectedUserValue : "",
+          brand: correctedBrand !== "All Brands" ? correctedBrand : "",
+          model: correctedModel !== "All Models" ? correctedModel : "",
+          user: correctedUser !== "All Users" ? correctedUser : "",
         },
       });
   
@@ -71,10 +97,9 @@ const SearchComponent = () => {
               onSelectionChange={setSelectedBrand}
             >
               <DropdownItem key="All Brands">All Brands</DropdownItem>
-              <DropdownItem key="Apple">Apple</DropdownItem>
-              <DropdownItem key="Dell">Dell</DropdownItem>
-              <DropdownItem key="HP">HP</DropdownItem>
-              <DropdownItem key="Mac">Mac</DropdownItem>
+              {brands.map((brand) => (
+                <DropdownItem key={brand}>{brand}</DropdownItem>
+              ))}
             </DropdownMenu>
           </Dropdown>
 
@@ -93,10 +118,9 @@ const SearchComponent = () => {
               onSelectionChange={setSelectedModel}
             >
               <DropdownItem key="All Models">All Models</DropdownItem>
-              <DropdownItem key="G15">G15</DropdownItem>
-              <DropdownItem key="Mackbook Pro">Macbook Pro</DropdownItem>
-              <DropdownItem key="HP132">HP132</DropdownItem>
-              <DropdownItem key="M2">M2</DropdownItem>
+              {models.map((model) => (
+                <DropdownItem key={model}>{model}</DropdownItem>
+              ))}
             </DropdownMenu>
           </Dropdown>
 
@@ -115,9 +139,9 @@ const SearchComponent = () => {
               onSelectionChange={setSelectedUser}
             >
               <DropdownItem key="All Users">All Users</DropdownItem>
-              <DropdownItem key="Standard User">Standard User</DropdownItem>
-              <DropdownItem key="Support User">Support User</DropdownItem>
-              <DropdownItem key="Admin User">Admin User</DropdownItem>
+              {users.map((user) => (
+                <DropdownItem key={user}>{user}</DropdownItem>
+              ))}
             </DropdownMenu>
           </Dropdown>
         </div>

@@ -12,7 +12,7 @@ const DevicesIndex = () => {
   const [deviceFormData, setDeviceFormData] = useState(null);
   const [newDeviceData, setNewDeviceData] = useState(null);
   const [deleteDevice, setDeleteDevice] = useState(null);
-  const [devices, setDevices] = useState([]); 
+  const [devices, setDevices] = useState([]);
   const deviceApiUrl = import.meta.env.VITE_DEVICE_API_URL;
 
   useEffect(() => {
@@ -23,10 +23,21 @@ const DevicesIndex = () => {
     try {
       const response = await axios.get(`${deviceApiUrl}/listAll`);
       if (Array.isArray(response.data)) {
-        setDevices(response.data); 
+        setDevices(response.data);
       }
     } catch (error) {
       console.error("Error fetching devices:", error);
+    }
+  };
+
+  const handleAddDevice = async (deviceData) => {
+    try {
+      const response = await axios.post(`${deviceApiUrl}/save`, deviceData);
+      if (response.status === 201 || response.status === 200) {
+        fetchDevices();
+      }
+    } catch (error) {
+      console.error("Error adding new device:", error);
     }
   };
 
@@ -79,7 +90,9 @@ const DevicesIndex = () => {
       <DeviceForm
         isOpen={!!deviceFormData}
         onClose={(device) => {
-          setNewDeviceData(device);
+          if (device) {
+            handleAddDevice(device);
+          }
           setDeviceFormData(null);
         }}
         selectedDevice={deviceFormData}
