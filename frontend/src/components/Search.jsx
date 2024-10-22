@@ -1,33 +1,33 @@
-import React, { useState } from "react";
-import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spacer } from "@nextui-org/react";
+import { useState } from "react"; 
+import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spacer, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import axios from "axios";
+import Icon from "./common/Icon"; 
 
 const SearchComponent = () => {
   const [searchParams, setSearchParams] = useState({
-    serialNumber: "",
-    brand: "",
-    model: "",
-    user: ""
+    searchText: "",
+    brand: "All Brands",
+    model: "All Models",
+    user: "All Users",
   });
 
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState(new Set(["All Brands"]));
+  const [selectedModel, setSelectedModel] = useState(new Set(["All Models"]));
+  const [selectedUser, setSelectedUser] = useState(new Set(["All Users"]));
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [name]: value
-    }));
-  };
+  const selectedBrandValue = Array.from(selectedBrand).join(", ");
+  const selectedModelValue = Array.from(selectedModel).join(", ");
+  const selectedUserValue = Array.from(selectedUser).join(", ");
 
   const handleSearch = async () => {
     try {
       const response = await axios.get(`${process.env.VITE_APP_DEVICE_API_URL}/listAll`, {
         params: {
-          serialNumber: searchParams.serialNumber,
-          brand: searchParams.brand,
-          model: searchParams.model,
-          user: searchParams.user
+          searchText: searchParams.searchText,
+          brand: selectedBrandValue !== "All Brands" ? selectedBrandValue : "",
+          model: selectedModelValue !== "All Models" ? selectedModelValue : "",
+          user: selectedUserValue !== "All Users" ? selectedUserValue : "",
         }
       });
   
@@ -36,49 +36,91 @@ const SearchComponent = () => {
       console.error("Error fetching search results:", error);
     }
   };
-  
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
       <div style={{ marginBottom: "20px" }}>
         <Input
-          name="serialNumber"
-          value={searchParams.serialNumber}
-          onChange={handleInputChange}
-          label="Serial Number"
+          name="searchText"
+          value={searchParams.searchText}
+          onChange={(e) => setSearchParams({ ...searchParams, searchText: e.target.value })}
+          label="Search"
           clearable
-          placeholder="Search by Serial Number"
-        />
-        <Spacer y={0.5} />
-        <Input
-          name="brand"
-          value={searchParams.brand}
-          onChange={handleInputChange}
-          label="Brand"
-          clearable
-          placeholder="Search by Brand"
-        />
-        <Spacer y={0.5} />
-        <Input
-          name="model"
-          value={searchParams.model}
-          onChange={handleInputChange}
-          label="Model"
-          clearable
-          placeholder="Search by Model"
-        />
-        <Spacer y={0.5} />
-        <Input
-          name="user"
-          value={searchParams.user}
-          onChange={handleInputChange}
-          label="User"
-          clearable
-          placeholder="Search by User"
+          placeholder="Search by Serial Number, Brand, or User..."
+          startContent={<Icon icon="fas fa-search" />}
         />
         <Spacer y={1} />
+
+        <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="bordered" className="capitalize">
+                {selectedBrandValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Brand Selection"
+              variant="flat"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectedBrand}
+              onSelectionChange={setSelectedBrand}
+            >
+              <DropdownItem key="All Brands">All Brands</DropdownItem>
+              <DropdownItem key="Apple">Apple</DropdownItem>
+              <DropdownItem key="Dell">Dell</DropdownItem>
+              <DropdownItem key="HP">HP</DropdownItem>
+              <DropdownItem key="Mac">Mac</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="bordered" className="capitalize">
+                {selectedModelValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Model Selection"
+              variant="flat"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectedModel}
+              onSelectionChange={setSelectedModel}
+            >
+              <DropdownItem key="All Models">All Models</DropdownItem>
+              <DropdownItem key="G15">G15</DropdownItem>
+              <DropdownItem key="Mackbook Pro">Macbook Pro</DropdownItem>
+              <DropdownItem key="HP132">HP132</DropdownItem>
+              <DropdownItem key="M2">M2</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="bordered" className="capitalize">
+                {selectedUserValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="User Role Selection"
+              variant="flat"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectedUser}
+              onSelectionChange={setSelectedUser}
+            >
+              <DropdownItem key="All Users">All Users</DropdownItem>
+              <DropdownItem key="Standard User">Standard User</DropdownItem>
+              <DropdownItem key="Support User">Support User</DropdownItem>
+              <DropdownItem key="Admin User">Admin User</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+
+        <Spacer y={1} />
         <Button onPress={handleSearch} color="primary">
-          Search
+          <Icon icon="fas fa-search" /> Search
         </Button>
       </div>
 

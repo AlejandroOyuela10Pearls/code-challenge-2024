@@ -24,7 +24,6 @@ const DevicesIndex = () => {
       const response = await axios.get(`${deviceApiUrl}/listAll`);
       if (Array.isArray(response.data)) {
         setDevices(response.data); 
-        console.log("Devices fetched from API:", response.data);
       }
     } catch (error) {
       console.error("Error fetching devices:", error);
