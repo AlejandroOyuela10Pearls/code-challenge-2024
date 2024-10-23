@@ -2,45 +2,40 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
 import UserList from "./UserList";
 import Icon from "../common/Icon";
-import axios from 'axios';
 import AddNewUserForm from "./AddNewUserForm";
+import { fetchUsers, createUser, updateUser, toggleUserStatus } from "../../services/users";
 
 const UserManagementIndex = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const userApiUrl = import.meta.env.VITE_USER_API_URL;
 
   useEffect(() => {
-    fetchUsers();
+    loadUsersList();
   }, []);
 
-  const fetchUsers = async () => {
+  const loadUsersList = async () => {
     try {
-      const response = await axios.get(`${userApiUrl}/listUsers`);
-      if (response.data.result) {
-        setUsers(response.data.result); 
-      }
+      const usersList = await fetchUsers();
+      setUsers(usersList);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      //todo: throw alert box
     }
   };
 
-  const handleSaveUser = (newUser) => {
-    if (selectedUser) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === selectedUser.id ? { ...user, ...newUser } : user
-        )
-      );
-    } else {
-      setUsers((prevUsers) => [
-        ...prevUsers,
-        { id: users.length + 1, ...newUser },
-      ]);
+  const handleSaveUser = async (newUser) => {
+    try {
+      if (selectedUser) {
+        await updateUser(selectedUser.id, newUser);
+      } else {
+        await createUser(newUser);
+      }
+      setIsFormOpen(false);
+      setSelectedUser(null);
+      loadUsersList();  // Reload the user list after save
+    } catch (error) {
+      //todo: throw alert box
     }
-    setIsFormOpen(false);
-    setSelectedUser(null);
   };
 
   const handleEditUser = (user) => {
@@ -50,15 +45,16 @@ const UserManagementIndex = () => {
 
   const handleAddNewUser = () => {
     setSelectedUser(null);
-    setIsFormOpen(true); 
+    setIsFormOpen(true);
   };
 
-  const handleToggleStatus = (userId) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, active: !user.active } : user
-      )
-    );
+  const handleToggleStatus = async (userId) => {
+    try {
+      await toggleUserStatus(userId);
+      loadUsersList();
+    } catch (error) {
+      //todo: throw alert box
+    }
   };
 
   return (

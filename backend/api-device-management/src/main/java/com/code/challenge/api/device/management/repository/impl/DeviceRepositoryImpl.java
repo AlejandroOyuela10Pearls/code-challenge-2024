@@ -33,23 +33,43 @@ public class DeviceRepositoryImpl implements DeviceCustomRepository {
                 .switchIfEmpty(Mono.error(new RuntimeException("Device not found")));
     }
 
-    @Override
-    public Flux<Device> findByFilter(FilterDevice filterDevice) {
+ @Override
+public Flux<Device> findByFilter(FilterDevice filterDevice) {
+    try {
+        System.out.println("FilterDevice: " + filterDevice); 
         Query query = new Query();
 
         if (filterDevice.getSerialNumber() != null && !filterDevice.getSerialNumber().isEmpty()) {
             query.addCriteria(Criteria.where("serialNumber").is(filterDevice.getSerialNumber()));
         }
+
         if (filterDevice.getBrand() != null && !filterDevice.getBrand().isEmpty()) {
             query.addCriteria(Criteria.where("brand").is(filterDevice.getBrand()));
         }
+
         if (filterDevice.getModel() != null && !filterDevice.getModel().isEmpty()) {
             query.addCriteria(Criteria.where("model").is(filterDevice.getModel()));
         }
 
+        if (filterDevice.getSearchText() != null && !filterDevice.getSearchText().isEmpty()) {
+            String searchText = filterDevice.getSearchText();
+            query.addCriteria(new Criteria().orOperator(
+                Criteria.where("serialNumber").regex(searchText, "i"),
+                Criteria.where("brand").regex(searchText, "i"),
+                Criteria.where("model").regex(searchText, "i"),
+                Criteria.where("cpu").regex(searchText, "i"),
+                Criteria.where("gpu").regex(searchText, "i"),
+                Criteria.where("ram").regex(searchText, "i"),
+                Criteria.where("hardDrive").regex(searchText, "i"),
+                Criteria.where("condition").regex(searchText, "i")
+            ));
+        }
+
         return mongoTemplate.find(query, Device.class);
+    } catch (Exception e) {
+        System.err.println("Error executing findByFilter: " + e.getMessage());
+        e.printStackTrace();
+        throw new RuntimeException("Error interno del servidor.");
     }
-
-
-
+}
 }

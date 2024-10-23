@@ -15,4 +15,5 @@ public class FilterDevice {
     private String serialNumber;     // Manufacturer’s unique identifier for the device
     private String brand;            // Device manufacturer (e.g., Dell, Apple)
     private String model;            // Device model name or number
+    private String searchText;       // General search term for multiple fields
 }

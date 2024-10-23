@@ -44,18 +44,24 @@ public class DeviceManagementCotroller {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/listBy")
-    public Flux<?> listByFilters(@RequestParam("serialNumber") String serialNumber,
-                                 @RequestParam("brand") String brand,
-                                 @RequestParam("model") String model){
+@GetMapping("/listBy")
+public Flux<?> listByFilters(
+        @RequestParam(value = "serialNumber", required = false) String serialNumber,
+        @RequestParam(value = "brand", required = false) String brand,
+        @RequestParam(value = "model", required = false) String model,
+        @RequestParam(value = "searchText", required = false) String searchText) {
 
-        FilterDevice filterDevice = FilterDevice.builder()
-                .serialNumber(serialNumber)
-                .brand(brand)
-                .model(model)
-                .build();
+    System.out.println("Received searchText: " + searchText);  // Add logging here
+    System.out.println("Received brand: " + brand);            // Add logging here
+    System.out.println("Received model: " + model);            // Add logging here
 
-        return service.listByFilter(filterDevice);
-    }
+    FilterDevice filterDevice = FilterDevice.builder()
+            .serialNumber(serialNumber != null ? serialNumber : "")
+            .brand(brand != null ? brand : "")
+            .model(model != null ? model : "")
+            .searchText(searchText != null ? searchText : "")
+            .build();
 
+    return service.listByFilter(filterDevice);
+}
 }
