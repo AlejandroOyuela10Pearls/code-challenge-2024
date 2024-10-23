@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
