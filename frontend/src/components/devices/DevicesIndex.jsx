@@ -1,43 +1,72 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Icon from "../common/Icon";
 import DevicesList from "./DevicesList";
 import DevicesDetails from "./DevicesDetails";
 import DeviceForm from "./DeviceForm";
 import TwoButtonsModal from "../common/TwoButtonsModal";
+
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
-import axios from "axios";
+import {
+  fetchDevices,
+  createDevice,
+  updateDevice,
+} from "../../services/devices";
 
 const DevicesIndex = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [deviceFormData, setDeviceFormData] = useState(null);
-  const [newDeviceData, setNewDeviceData] = useState(null);
   const [deleteDevice, setDeleteDevice] = useState(null);
   const [devices, setDevices] = useState([]);
-  const deviceApiUrl = import.meta.env.VITE_DEVICE_API_URL;
 
   useEffect(() => {
-    fetchDevices();
+    loadDevicesList();
   }, []);
 
-  const fetchDevices = async () => {
+  const loadDevicesList = async () => {
     try {
-      const response = await axios.get(`${deviceApiUrl}/listAll`);
-      if (Array.isArray(response.data)) {
-        setDevices(response.data);
-      }
+      const devicesList = await fetchDevices();
+      setDevices(devicesList);
     } catch (error) {
-      console.error("Error fetching devices:", error);
+      //todo: throw alert box
     }
   };
 
-  const handleAddDevice = async (deviceData) => {
+  const handleAddDevice = async (data) => {
     try {
-      const response = await axios.post(`${deviceApiUrl}/save`, deviceData);
-      if (response.status === 201 || response.status === 200) {
-        fetchDevices();
+      console.log("data", data);
+      let response;
+      if (data.id === 0) {
+        response = await createDevice(data);
+      } else {
+        const {
+          id,
+          serialNumber,
+          brand,
+          model,
+          hardDrive,
+          ram,
+          gpu,
+          cpu,
+          notes,
+          condition,
+        } = data;
+        response = await updateDevice(id, {
+          serialNumber,
+          brand,
+          model,
+          hardDrive,
+          ram,
+          gpu,
+          cpu,
+          notes,
+          condition,
+        });
       }
+      //todo: throw alert box
+      loadDevicesList();
     } catch (error) {
-      console.error("Error adding new device:", error);
+      //todo: throw alert box
     }
   };
 

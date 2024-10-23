@@ -22,9 +22,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 const SCHEMA = yup.object({
   brand: yup.string().required("Please select a Brand."),
   model: yup.string().required("A Model is required."),
-  serial: yup.string().required("A Serial Number is required."),
+  serialNumber: yup.string().required("A Serial Number is required."),
   condition: yup.string().required("Please select a Condition."),
-  hdd: yup.string().required("A Hard Drive (HD) is required."),
+  hardDrive: yup.string().required("A Hard Drive (HD) is required."),
   ram: yup.string().required("A RAM value is required."),
   gpu: yup.string(),
   cpu: yup.string().required("A CPU value is required."),
@@ -126,7 +126,7 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
 
               <Controller
                 control={control}
-                name="serial"
+                name="serialNumber"
                 render={({ field }) => (
                   <Input
                     isRequired
@@ -135,8 +135,8 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
                     value={field.value}
                     onValueChange={field.onChange}
                     name={field.name}
-                    isInvalid={!!errors.serial?.message}
-                    errorMessage={errors.serial?.message}
+                    isInvalid={!!errors.serialNumber?.message}
+                    errorMessage={errors.serialNumber?.message}
                   />
                 )}
               />
@@ -168,7 +168,7 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
 
               <Controller
                 control={control}
-                name="hdd"
+                name="hardDrive"
                 render={({ field }) => (
                   <Input
                     isRequired
@@ -177,8 +177,8 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
                     value={field.value}
                     onValueChange={field.onChange}
                     name={field.name}
-                    isInvalid={!!errors.hdd?.message}
-                    errorMessage={errors.hdd?.message}
+                    isInvalid={!!errors.hardDrive?.message}
+                    errorMessage={errors.hardDrive?.message}
                   />
                 )}
               />

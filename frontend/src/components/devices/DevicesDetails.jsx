@@ -41,7 +41,7 @@ const DevicesDetails = ({ isOpen, onClose, device }) => {
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize">Serial Number</p>
               <p className="text-bold text-sm capitalize text-default-600">
-                {device?.serial}
+                {device?.serialNumber}
               </p>
             </div>
 
@@ -53,7 +53,7 @@ const DevicesDetails = ({ isOpen, onClose, device }) => {
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize">Hard Drive (HD)</p>
               <p className="text-bold text-sm capitalize text-default-600">
-                {device?.hdd}
+                {device?.hardDrive}
               </p>
             </div>
 
@@ -82,8 +82,8 @@ const DevicesDetails = ({ isOpen, onClose, device }) => {
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">Added at:</p>
             <p className="text-bold text-sm capitalize text-default-600">
-              {device?.creation_date
-                ? moment(device.creation_date).format("MMMM Do YYYY, h:mm:ss a")
+              {device?.addedAt
+                ? moment(device.addedAt).format("MMMM Do YYYY, h:mm:ss a")
                 : ""}
             </p>
           </div>
