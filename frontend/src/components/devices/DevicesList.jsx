@@ -29,6 +29,7 @@ const DevicesList = ({
   setSelectedDevice,
   setDeviceFormData,
   setDeleteDevice,
+  reactiveAction,
 }) => {
   const renderCell = useCallback(
     (device, columnKey) => {
@@ -82,10 +83,14 @@ const DevicesList = ({
     [setSelectedDevice, setDeviceFormData, setDeleteDevice]
   );
 
+  const filteredColumns = columns.filter(
+    (x) => x.uid !== "actions" || !reactiveAction
+  );
+
   return (
     <>
       <Table aria-label="Devices List" css={{ minWidth: "100%" }}>
-        <TableHeader columns={columns}>
+        <TableHeader columns={filteredColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
@@ -98,7 +103,7 @@ const DevicesList = ({
         <TableBody items={devices}>
           {(device) => (
             <TableRow key={device.id}>
-              {columns.map((column) => (
+              {filteredColumns.map((column) => (
                 <TableCell
                   key={column.uid}
                   align={column.uid === "actions" ? "center" : "start"}

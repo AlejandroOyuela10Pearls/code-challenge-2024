@@ -60,17 +60,18 @@ export const listByFilters = (searchText, brand, model) => {
   return new Promise(async (resolve, reject) => {
     try {
       const url = `${deviceApiUrl}/listBy`;
-      console.log(`Sending request with searchText: ${searchText}, brand: ${brand}, model: ${model}`); 
+      console.log(
+        `Sending request with searchText: ${searchText}, brand: ${brand}, model: ${model}`
+      );
       const response = await axios.get(url, {
         params: {
-          serialNumber: "", 
-          brand: brand || "", 
-          model: model || "", 
-          searchText: searchText || "" 
+          serialNumber: "",
+          brand: brand || "",
+          model: model || "",
+          searchText: searchText || "",
         },
       });
 
-      console.log("Response from backend:", response.data);  
       if (Array.isArray(response.data)) {
         resolve(response.data);
       } else {
