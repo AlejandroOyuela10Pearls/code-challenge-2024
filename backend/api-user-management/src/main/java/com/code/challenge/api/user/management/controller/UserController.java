@@ -44,4 +44,13 @@ public class UserController {
 
     }
 
+    @PutMapping("/assignDevice")
+    public Mono<?> userAssignDevice(
+            @RequestParam("id") String idUser,
+            @RequestParam("idDevice") String idDevice,
+            @RequestParam("serial") String serial) {
+        return service.userAssignDevice(idUser,idDevice,serial);
+
+    }
+
 }
