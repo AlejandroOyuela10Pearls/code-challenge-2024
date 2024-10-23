@@ -38,6 +38,37 @@
 			"response": []
 		},
 		{
+			"name": "Assign",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"date\": \"2024-10-21T10:00:00Z\",\n    \"deviceId\": \"12345678-1234-1234-1234-1234567890ab\",\n    \"deviceSerial\": \"SN-123456789\",\n    \"supportUserId\": \"support-user-id\",\n    \"supportUserName\": \"Support User\",\n    \"assignedUserId\": \"assigned-user-id\",\n    \"assignedUserName\": \"Assigned User\",\n    \"reason\": \"Equipment needed for project X\",\n    \"notes\": \"Ensure the device is in working condition\",\n    \"endDate\": null  // o \"2024-11-21T10:00:00Z\" si aplica\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/assign",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"assign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List all device",
 			"request": {
 				"method": "GET",
@@ -54,6 +85,28 @@
 						"api",
 						"v1",
 						"listAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Assignments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/listAssignments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"listAssignments"
 					]
 				}
 			},

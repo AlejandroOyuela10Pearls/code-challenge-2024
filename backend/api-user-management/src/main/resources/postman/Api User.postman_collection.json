@@ -134,7 +134,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8087/user-management/api/v1/update-status?id=e033e806-48e6-4f73-bd45-b522861847de&isActive=true",
+					"raw": "http://localhost:8087/user-management/api/v1/assignDevice?id=77e5f2cb-c9ad-45eb-a7f1-c465c663af68&idDevice=11111122222233466666688888989999&serial=SE999999",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -144,16 +144,20 @@
 						"user-management",
 						"api",
 						"v1",
-						"update-status"
+						"assignDevice"
 					],
 					"query": [
 						{
 							"key": "id",
-							"value": "e033e806-48e6-4f73-bd45-b522861847de"
+							"value": "77e5f2cb-c9ad-45eb-a7f1-c465c663af68"
 						},
 						{
-							"key": "isActive",
-							"value": "true"
+							"key": "idDevice",
+							"value": "11111122222233466666688888989999"
+						},
+						{
+							"key": "serial",
+							"value": "SE999999"
 						}
 					]
 				}
