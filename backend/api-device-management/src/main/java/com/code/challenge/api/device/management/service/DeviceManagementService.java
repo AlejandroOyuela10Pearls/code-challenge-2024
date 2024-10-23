@@ -2,6 +2,7 @@ package com.code.challenge.api.device.management.service;
 
 import com.code.challenge.api.device.management.exception.BusinessException;
 import com.code.challenge.api.device.management.model.Device;
+import com.code.challenge.api.device.management.model.FilterDevice;
 import com.code.challenge.api.device.management.model.Maintenance;
 import com.code.challenge.api.device.management.model.request.DeviceRequest;
 import com.code.challenge.api.device.management.model.request.MaintenanceRequest;
@@ -89,5 +90,9 @@ public class DeviceManagementService {
                 .build();
 
         return deviceCustomRepository.addMaintenance(UUID.fromString(deviceId), maintenance);
+    }
+
+    public Flux<Device> listByFilter(FilterDevice filters){
+        return deviceCustomRepository.findByFilter(filters);
     }
 }

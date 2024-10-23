@@ -1,5 +1,6 @@
 package com.code.challenge.api.device.management.controller;
 
+import com.code.challenge.api.device.management.model.FilterDevice;
 import com.code.challenge.api.device.management.model.request.DeviceRequest;
 import com.code.challenge.api.device.management.model.request.MaintenanceRequest;
 import com.code.challenge.api.device.management.service.DeviceManagementService;
@@ -34,13 +35,26 @@ public class DeviceManagementCotroller {
         return service.updateDevice(id, request);
     }
 
-
     @PostMapping("/maintenance")
     public Mono<?> addMaintenance
             (@RequestParam("id") String id, @RequestBody MaintenanceRequest maintenance) {
         return service.addMaintenanceRecord(id, maintenance)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/listBy")
+    public Flux<?> listByFilters(@RequestParam("serialNumber") String serialNumber,
+                                 @RequestParam("brand") String brand,
+                                 @RequestParam("model") String model){
+
+        FilterDevice filterDevice = FilterDevice.builder()
+                .serialNumber(serialNumber)
+                .brand(brand)
+                .model(model)
+                .build();
+
+        return service.listByFilter(filterDevice);
     }
 
 }

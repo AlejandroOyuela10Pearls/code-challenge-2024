@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"serialNumber\": \"SN9099\",\n    \"brand\": \"Mac\",\n    \"model\": \"M2\",\n    \"hardDrive\": \"512 GB SSD\",\n    \"ram\": \"16 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
+					"raw": "{\n    \"serialNumber\": \"SN77777\",\n    \"brand\": \"Windows\",\n    \"model\": \"laptop\",\n    \"hardDrive\": \"512 GB SSD\",\n    \"ram\": \"16 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -54,6 +54,42 @@
 						"api",
 						"v1",
 						"listAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List by filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/listBy?serialNumber=SN90989&brand&model",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"listBy"
+					],
+					"query": [
+						{
+							"key": "serialNumber",
+							"value": "SN90989"
+						},
+						{
+							"key": "brand",
+							"value": null
+						},
+						{
+							"key": "model",
+							"value": null
+						}
 					]
 				}
 			},
