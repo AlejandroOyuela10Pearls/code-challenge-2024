@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
 import java.util.UUID;
 @Data
 @Builder
@@ -23,4 +24,5 @@ public class User {
     private String email;       // User’s email address
     private String role;        // User’s role in the system
     private boolean active;     // Boolean flag indicating if the user is currently active
+    private List<Device> devices;
 }

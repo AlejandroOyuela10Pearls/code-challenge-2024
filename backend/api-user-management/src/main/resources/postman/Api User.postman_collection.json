@@ -127,6 +127,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Assign device to user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/update-status?id=e033e806-48e6-4f73-bd45-b522861847de&isActive=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"update-status"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "e033e806-48e6-4f73-bd45-b522861847de"
+						},
+						{
+							"key": "isActive",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
