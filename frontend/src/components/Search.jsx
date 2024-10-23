@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Input,
   Button,
@@ -34,25 +34,25 @@ const fuseOptions = {
 const SearchComponent = () => {
   const [searchParams, setSearchParams] = useState({
     searchText: "",
-    brand: "All Brands",
-    model: "All Models",
+    brand: "None",
+    model: "None",
   });
 
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedBrand, setSelectedBrand] = useState(new Set(["All Brands"]));
-  const [selectedModel, setSelectedModel] = useState(new Set(["All Models"]));
+  const [selectedBrand, setSelectedBrand] = useState(new Set(["None"]));
+  const [selectedModel, setSelectedModel] = useState(new Set(["None"]));
+  const [isSearchDisabled, setIsSearchDisabled] = useState(true);
 
   const selectedBrandValue = Array.from(selectedBrand).join(", ");
   const selectedModelValue = Array.from(selectedModel).join(", ");
 
-  const brandFuse = new Fuse(
-    brandList.map((x) => x.key),
+  const searchTextFuse = new Fuse(
+    [...brandList.map((x) => x.key), ...models],
     fuseOptions
   );
-  const modelFuse = new Fuse(models, fuseOptions);
 
-  const getCorrectedValue = (value, fuseInstance, defaultValue) => {
-    if (value && value !== defaultValue) {
+  const getCorrectedValue = (value, fuseInstance) => {
+    if (value && value.trim() !== "") {
       const result = fuseInstance.search(value);
       return result.length > 0 ? result[0].item : value;
     }
@@ -60,52 +60,47 @@ const SearchComponent = () => {
   };
 
   const handleSearch = async () => {
-    const correctedBrand = getCorrectedValue(
-      selectedBrandValue,
-      brandFuse,
-      "All Brands"
+  // Correct only the searchText using Fuse.js
+  const correctedSearchText = getCorrectedValue(
+    searchParams.searchText,
+    searchTextFuse
+  );
+
+  // Send the selected brand and model filters along with the search text
+  const brandToSend = selectedBrandValue !== "None" ? selectedBrandValue : "";
+  const modelToSend = selectedModelValue !== "None" ? selectedModelValue : "";
+
+  // Debugging logs for the search parameters
+  console.log("Corrected Search Text:", correctedSearchText);
+  console.log("Brand Filter:", brandToSend);
+  console.log("Model Filter:", modelToSend);
+
+  try {
+    const results = await listByFilters(
+      correctedSearchText || "",  // Search across all fields
+      brandToSend,                // Apply brand filter if selected
+      modelToSend                 // Apply model filter if selected
     );
-    const correctedModel = getCorrectedValue(
-      selectedModelValue,
-      modelFuse,
-      "All Models"
-    );
 
-    const shouldUseSearchTextOnly =
-      searchParams.searchText && searchParams.searchText.trim() !== "";
-
-    const brandToSend = shouldUseSearchTextOnly
-      ? ""
-      : correctedBrand !== "All Brands"
-      ? correctedBrand
-      : "";
-    const modelToSend = shouldUseSearchTextOnly
-      ? ""
-      : correctedModel !== "All Models"
-      ? correctedModel
-      : "";
-
-    // Debugging logs for the search parameters
-    console.log("Search Text:", searchParams.searchText);
-    console.log("Brand Filter:", brandToSend);
-    console.log("Model Filter:", modelToSend);
-
-    try {
-      const results = await listByFilters(
-        searchParams.searchText || "", // This is where the search text is sent
-        brandToSend, // This is where the brand is sent
-        modelToSend // This is where the model is sent
-      );
-
-      if (results && results.length > 0) {
-        setSearchResults(results);
-      } else {
-        setSearchResults([]);
-      }
-    } catch (error) {
-      console.error("Error fetching search results:", error);
+    // Now, merge the search text and brand filter results
+    if (results && results.length > 0) {
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+  }
+};
+
+
+  useEffect(() => {
+    const isSearchTextValid = searchParams.searchText.trim() !== "";
+    const isBrandSelected = selectedBrandValue !== "None";
+    const isModelSelected = selectedModelValue !== "None";
+
+    setIsSearchDisabled(!isSearchTextValid && !isBrandSelected && !isModelSelected);
+  }, [searchParams.searchText, selectedBrandValue, selectedModelValue]);
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
@@ -138,7 +133,7 @@ const SearchComponent = () => {
               selectedKeys={selectedBrand}
               onSelectionChange={setSelectedBrand}
             >
-              <DropdownItem key="All Brands">All Brands</DropdownItem>
+              <DropdownItem key="None">None</DropdownItem>
               {brandList.map((brand) => (
                 <DropdownItem key={brand.key}>{brand.label}</DropdownItem>
               ))}
@@ -159,7 +154,7 @@ const SearchComponent = () => {
               selectedKeys={selectedModel}
               onSelectionChange={setSelectedModel}
             >
-              <DropdownItem key="All Models">All Models</DropdownItem>
+              <DropdownItem key="None">None</DropdownItem>
               {models.map((model) => (
                 <DropdownItem key={model}>{model}</DropdownItem>
               ))}
@@ -168,7 +163,7 @@ const SearchComponent = () => {
         </div>
 
         <Spacer y={1} />
-        <Button onPress={handleSearch} color="primary">
+        <Button onPress={handleSearch} color="primary" isDisabled={isSearchDisabled}>
           <Icon icon="fas fa-search" /> Search
         </Button>
       </div>
