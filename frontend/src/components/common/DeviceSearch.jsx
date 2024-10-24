@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Input,
   Button,
@@ -6,21 +6,29 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Tooltip,
+  Spacer,
+  Pagination,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@nextui-org/react";
 import { listByFilters } from "../../services/devices";
 import { brandList } from "../../utils/DeviceParams";
 import { NoResultsIcon } from "./customIcons/NoResultsIcon";
-
 import Icon from "./Icon";
 import Fuse from "fuse.js";
-import DevicesList from "../devices/DevicesList";
+import DeviceCondition from "../devices/DeviceCondition";
+import DeviceBrandImg from "../devices/DeviceBrandImg";
 
 const models = [
-  "G15",
-  "Macbook Pro",
-  "HP132",
-  "M2",
+  "Omen",
   "Legion 7",
+  "Blade",
+  "MateBook E",
   "XPS 15",
   "Rog",
   "m18",
@@ -31,7 +39,14 @@ const fuseOptions = {
   threshold: 0.3,
 };
 
-const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
+const columns = [
+  { name: "BRAND & MODEL", uid: "brandModel" },
+  { name: "SERIAL NUMBER", uid: "serialNumber" },
+  { name: "CONDITION", uid: "condition" },
+  { name: "DEVICE ID", uid: "deviceId" },
+];
+
+const DeviceSearch = ({ setGlobalLoading, className }) => {
   const [searchParams, setSearchParams] = useState({
     searchText: "",
     brand: "None",
@@ -42,6 +57,8 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
   const [selectedBrand, setSelectedBrand] = useState(new Set(["None"]));
   const [selectedModel, setSelectedModel] = useState(new Set(["None"]));
   const [isSearchDisabled, setIsSearchDisabled] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const selectedBrandValue = Array.from(selectedBrand).join(", ");
   const selectedModelValue = Array.from(selectedModel).join(", ");
@@ -60,29 +77,21 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
   };
 
   const handleSearch = async () => {
-    // Correct only the searchText using Fuse.js
     const correctedSearchText = getCorrectedValue(
       searchParams.searchText,
       searchTextFuse
     );
 
-    // Send the selected brand and model filters along with the search text
     const brandToSend = selectedBrandValue !== "None" ? selectedBrandValue : "";
     const modelToSend = selectedModelValue !== "None" ? selectedModelValue : "";
 
-    // Debugging logs for the search parameters
-    console.log("Corrected Search Text:", correctedSearchText);
-    console.log("Brand Filter:", brandToSend);
-    console.log("Model Filter:", modelToSend);
-
     try {
       const results = await listByFilters(
-        correctedSearchText || "", // Search across all fields
-        brandToSend, // Apply brand filter if selected
-        modelToSend // Apply model filter if selected
+        correctedSearchText || "",
+        brandToSend,
+        modelToSend
       );
 
-      // Now, merge the search text and brand filter results
       if (results && results.length > 0) {
         setSearchResults(results);
       } else {
@@ -92,6 +101,42 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
       console.error("Error fetching search results:", error);
     }
   };
+
+  const paginatedDevices = searchResults.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const renderCell = useCallback(
+    (device, columnKey) => {
+      switch (columnKey) {
+        case "brandModel":
+          return (
+            <DeviceBrandImg
+              device={device}
+              description={device.model}
+              name={device.brand}
+              model={device.model}
+            />
+          );
+        case "serialNumber":
+          return <p className="text-bold text-sm">{device.serialNumber}</p>;
+        case "condition":
+          return <DeviceCondition device={device} />;
+        case "deviceId":
+          return (
+            <Tooltip content={device.id}>
+              <p className="text-gray-500 text-sm">
+                {device.id > 10 ? `${device.id.slice(0, 10)}...` : device.id}
+              </p>
+            </Tooltip>
+          );
+        default:
+          return device[columnKey];
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const isSearchTextValid = searchParams.searchText.trim() !== "";
@@ -182,7 +227,33 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
       </div>
 
       {searchResults.length > 0 && (
-        <DevicesList devices={searchResults} reactiveAction={actionOnDevice} />
+     <Table aria-label="Devices List" css={{ width: "100%", textAlign: "center" }}>
+     <TableHeader columns={columns}>
+       {(column) => (
+         <TableColumn
+           key={column.uid}
+           css={{ textAlign: "center", justifyContent: "center" }}
+         >
+           {column.name}
+         </TableColumn>
+       )}
+     </TableHeader>
+     <TableBody items={paginatedDevices}>
+       {(device) => (
+         <TableRow key={device.id}>
+           {columns.map((column) => (
+             <TableCell
+               key={column.uid}
+               css={{ textAlign: "center", justifyContent: "center" }}
+             >
+               {renderCell(device, column.uid)}
+             </TableCell>
+           ))}
+         </TableRow>
+       )}
+     </TableBody>
+   </Table>
+   
       )}
 
       {searchResults.length === 0 && (
@@ -192,6 +263,15 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
             <p>No devices found matching the search criteria.</p>
           </div>
         </div>
+      )}
+
+      <Spacer y={1} />
+      {searchResults.length > 0 && (
+        <Pagination
+          total={Math.ceil(searchResults.length / itemsPerPage)}
+          initialPage={1}
+          onChange={(page) => setCurrentPage(page)}
+        />
       )}
     </div>
   );

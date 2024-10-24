@@ -261,7 +261,7 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
               onPress={() => handleSubmit(true)}
               isDisabled={!isValid || !isDirty}
             >
-              {isNewDevice ? "Create" : "Edit"}
+              {isNewDevice ? "Create" : "Save"}
             </Button>
           </div>
         </ModalFooter>
