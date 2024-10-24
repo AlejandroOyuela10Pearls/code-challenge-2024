@@ -1,16 +1,16 @@
 import Icon from "./Icon";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import useResponsiveDesign from "../../utils/ResponsiveDesign"; // Assuming this is your hook
+import useResponsiveDesign from "../../utils/ResponsiveDesign"; 
 
 const SideBar = () => {
   const location = useLocation();
-  const isMobile = useResponsiveDesign("mobile"); // Detect mobile screen
+  const isMobile = useResponsiveDesign("mobile"); 
 
   return (
     <section
       className="dark:bg-zinc-900 shadow-xl h-full overflow-auto bg-[#ebebeb]"
-      style={{ width: isMobile ? "60px" : "250px" }} // Adjust sidebar width for mobile
+      style={{ width: isMobile ? "60px" : "250px" }} 
     >
       <div className="flex flex-col h-full justify-between text-[#627078]">
         <div className="flex flex-col">
