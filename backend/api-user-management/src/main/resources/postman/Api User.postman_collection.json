@@ -134,7 +134,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8087/user-management/api/v1/assignDevice?id=77e5f2cb-c9ad-45eb-a7f1-c465c663af68&idDevice=11111122222233466666688888989999&serial=SE999999",
+					"raw": "http://localhost:8087/user-management/api/v1/assignDevice?id=77e5f2cb-c9ad-45eb-a7f1-c465c663af68&idDevice=99999999999999999999999999&serial=SE111111",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -153,11 +153,48 @@
 						},
 						{
 							"key": "idDevice",
-							"value": "11111122222233466666688888989999"
+							"value": "99999999999999999999999999"
 						},
 						{
 							"key": "serial",
-							"value": "SE999999"
+							"value": "SE111111"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unpair Device",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/user-management/api/v1/unpairDevice?idUser=77e5f2cb-c9ad-45eb-a7f1-c465c663af68&idDevice=99999999999999999999999999",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"user-management",
+						"api",
+						"v1",
+						"unpairDevice"
+					],
+					"query": [
+						{
+							"key": "idUser",
+							"value": "77e5f2cb-c9ad-45eb-a7f1-c465c663af68"
+						},
+						{
+							"key": "idDevice",
+							"value": "99999999999999999999999999"
+						},
+						{
+							"key": "serial",
+							"value": "SE999999",
+							"disabled": true
 						}
 					]
 				}

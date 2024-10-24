@@ -75,4 +75,8 @@ public class UserService {
                 .build();
         return customRepository.assignDevice(device, UUID.fromString(idUser));
     }
+
+    public Mono<?> unpairDevice(String idUser, String idDevice ){
+        return customRepository.unpairDevice(UUID.fromString(idUser),idDevice);
+    }
 }

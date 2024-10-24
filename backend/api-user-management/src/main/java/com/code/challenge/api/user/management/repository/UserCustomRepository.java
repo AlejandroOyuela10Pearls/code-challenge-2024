@@ -8,5 +8,6 @@ import java.util.UUID;
 
 public interface UserCustomRepository {
     Mono<User> assignDevice (Device device, UUID  userId);
+    Mono<User> unpairDevice(UUID userId, String idDevice);
 
 }

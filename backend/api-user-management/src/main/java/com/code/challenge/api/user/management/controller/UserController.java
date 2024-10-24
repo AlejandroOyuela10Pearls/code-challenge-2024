@@ -54,4 +54,14 @@ public class UserController {
 
     }
 
+    @PutMapping("/unpairDevice")
+    public Mono<?> unpairDevice(
+            @RequestParam("idUser") String idUser,
+            @RequestParam("idDevice") String idDevice ){
+        return service.unpairDevice(idUser,idDevice);
+
+    }
+
+
+
 }

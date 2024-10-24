@@ -3,6 +3,7 @@ package com.code.challenge.api.user.management.repository.impl;
 import com.code.challenge.api.user.management.model.Device;
 import com.code.challenge.api.user.management.model.User;
 import com.code.challenge.api.user.management.repository.UserCustomRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -25,6 +26,16 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         Query query = new Query(Criteria.where("id").is(userId));
         Update updateWithPush = new Update().push("devices", device);
         return mongoTemplate.findAndModify(query, updateWithPush, FindAndModifyOptions.options().returnNew(true), User.class)
+                .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
+    }
+
+    @Override
+    public Mono<User> unpairDevice
+            (UUID userId, String idDevice) {
+        Query query = new Query(Criteria.where("id").is(userId));
+        Update updateWithPull = new Update().pull("devices", new Document("idDevice", idDevice));
+
+        return mongoTemplate.findAndModify(query, updateWithPull, FindAndModifyOptions.options().returnNew(true), User.class)
                 .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
     }
 
