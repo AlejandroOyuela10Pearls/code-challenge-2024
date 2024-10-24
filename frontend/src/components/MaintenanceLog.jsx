@@ -21,35 +21,35 @@ const MaintenanceLog = () => {
   const itemsPerPage = 5;
 
   useEffect(() => {
-    // Fetch all maintenances on component mount
     fetchMaintenances()
       .then((data) => {
-        setLogs(data); // Set the maintenance logs
+        setLogs(data);
       })
       .catch((error) => {
         console.error("Error fetching maintenance logs:", error);
       });
   }, []);
 
-  // Calculate the displayed logs based on pagination
   const displayedLogs = logs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Determine the color of the chip based on the condition
   const getChipColor = (condition) => {
     const normalizedCondition = condition.toLowerCase();
 
     if (normalizedCondition === "good" || normalizedCondition === "repaired") {
-      return "success"; // Set color as success for good or repaired
-    } else if (normalizedCondition === "inmaintenance" || normalizedCondition === "in maintenance") {
-      return "warning"; // Set color as warning for In Maintenance
+      return "success";
+    } else if (
+      normalizedCondition === "inmaintenance" ||
+      normalizedCondition === "in maintenance"
+    ) {
+      return "warning";
     } else if (normalizedCondition === "defective") {
-      return "danger"; // Set color as danger for defective
+      return "danger";
     }
 
-    return "default"; // Default color if no match
+    return "default";
   };
 
   return (
@@ -72,7 +72,7 @@ const MaintenanceLog = () => {
               <TableColumn>Condition</TableColumn>
             </TableHeader>
             <TableBody items={displayedLogs}>
-              {(log) => (
+              {displayedLogs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>{log.date}</TableCell>
                   <TableCell>{log.supportUser}</TableCell>
@@ -81,7 +81,7 @@ const MaintenanceLog = () => {
                   <TableCell>
                     <Chip
                       className="capitalize"
-                      color={getChipColor(log.currentCondition)} // Set color conditionally
+                      color={getChipColor(log.currentCondition)}
                       size="sm"
                       variant="flat"
                     >
@@ -89,7 +89,7 @@ const MaintenanceLog = () => {
                     </Chip>
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
           <Spacer y={1} />

@@ -9,11 +9,10 @@ import {
   Spacer,
   Pagination,
 } from "@nextui-org/react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
-
 import DeviceCondition from "./DeviceCondition";
 import DeviceBrandImg from "./DeviceBrandImg";
 
@@ -31,6 +30,14 @@ const DevicesList = ({
   setDeleteDevice,
   reactiveAction,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedDevices = devices.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const renderCell = useCallback(
     (device, columnKey) => {
       switch (columnKey) {
@@ -83,14 +90,11 @@ const DevicesList = ({
     [setSelectedDevice, setDeviceFormData, setDeleteDevice]
   );
 
-  const filteredColumns = columns.filter(
-    (x) => x.uid !== "actions" || !reactiveAction
-  );
 
   return (
     <>
       <Table aria-label="Devices List" css={{ minWidth: "100%" }}>
-        <TableHeader columns={filteredColumns}>
+        <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
               key={column.uid}
@@ -100,10 +104,10 @@ const DevicesList = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={devices}>
+        <TableBody items={paginatedDevices}>
           {(device) => (
             <TableRow key={device.id}>
-              {filteredColumns.map((column) => (
+              {columns.map((column) => (
                 <TableCell
                   key={column.uid}
                   align={column.uid === "actions" ? "center" : "start"}
@@ -116,7 +120,11 @@ const DevicesList = ({
         </TableBody>
       </Table>
       <Spacer y={1} />
-      <Pagination total={1} initialPage={1} />
+      <Pagination
+        total={Math.ceil(devices.length / itemsPerPage)}
+        initialPage={1}
+        onChange={(page) => setCurrentPage(page)}
+      />
     </>
   );
 };

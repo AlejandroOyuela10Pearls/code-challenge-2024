@@ -32,18 +32,25 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState(null);
   const [actionType, setActionType] = useState(null); // 'activate' or 'deactivate'
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedUsers = users.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleOpenModal = (user, action) => {
     setSelectedUser(user);
     setActionType(action);
-    onOpen(); // Open the modal
+    onOpen();
   };
 
   const handleConfirm = () => {
     if (selectedUser) {
       onToggleStatus(selectedUser.id, actionType === "activate");
     }
-    onOpenChange(false); // Close the modal after confirmation
+    onOpenChange(false);
   };
 
   const renderCell = useCallback(
@@ -99,7 +106,7 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody items={paginatedUsers}>
           {(user) => (
             <TableRow key={user.id}>
               {columns.map((column) => (
@@ -112,9 +119,11 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
         </TableBody>
       </Table>
       <Spacer y={1} />
-      <Pagination total={1} initialPage={1} />
-
-      {/* Modal for confirming activation/deactivation */}
+      <Pagination
+        total={Math.ceil(users.length / itemsPerPage)}
+        initialPage={1}
+        onChange={(page) => setCurrentPage(page)}
+      />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

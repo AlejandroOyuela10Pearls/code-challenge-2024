@@ -7,12 +7,16 @@ import {
   Input,
   Button,
   Spacer,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
+
+const roles = [
+  { label: "Standard User", value: "Standard User" },
+  { label: "Admin", value: "Admin" },
+  { label: "Support User", value: "Support User" },
+];
 
 const AddNewUserForm = ({ isOpen, onClose, onSave, selectedUser }) => {
   const [newUser, setNewUser] = useState({
@@ -21,12 +25,15 @@ const AddNewUserForm = ({ isOpen, onClose, onSave, selectedUser }) => {
     role: "Standard User",
     active: true,
   });
+  const [selectedRole, setSelectedRole] = useState(new Set([newUser.role]));
 
   useEffect(() => {
     if (selectedUser) {
       setNewUser(selectedUser);
+      setSelectedRole(new Set([selectedUser.role]));
     } else {
       setNewUser({ name: "", email: "", role: "Standard User", active: true });
+      setSelectedRole(new Set(["Standard User"]));
     }
   }, [selectedUser]);
 
@@ -38,10 +45,12 @@ const AddNewUserForm = ({ isOpen, onClose, onSave, selectedUser }) => {
     }));
   };
 
-  const handleRoleChange = (selectedRole) => {
+  const handleRoleChange = (key) => {
+    const role = Array.from(key)[0];
+    setSelectedRole(new Set([role]));
     setNewUser((prevUser) => ({
       ...prevUser,
-      role: selectedRole,
+      role: role,
     }));
   };
 
@@ -54,44 +63,36 @@ const AddNewUserForm = ({ isOpen, onClose, onSave, selectedUser }) => {
       <ModalContent>
         <ModalHeader>{selectedUser ? "Edit User" : "Add New User"}</ModalHeader>
         <ModalBody>
-          <Input label="Name" placeholder="Enter user's name" value={newUser.name} name="name" onChange={handleInputChange} />
+          <Input
+            label="Name"
+            placeholder="Enter user's name"
+            value={newUser.name}
+            name="name"
+            onChange={handleInputChange}
+          />
           <Spacer y={1} />
-          <Input label="Email" placeholder="Enter user's email" value={newUser.email} name="email" onChange={handleInputChange} />
+          <Input
+            label="Email"
+            placeholder="Enter user's email"
+            value={newUser.email}
+            name="email"
+            onChange={handleInputChange}
+          />
           <Spacer y={1} />
 
           <div className="w-full">
-            <Dropdown>
-              <DropdownTrigger>
-                <Input
-                  readOnly
-                  label="Role"
-                  placeholder="Select role"
-                  value={newUser.role}
-                  fullWidth
-                  contentRight={<i className="fa-solid fa-chevron-down"></i>}
-                  className="bg-gray-50"
-                />
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Select role"
-                variant="flat"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={newUser.role}
-                onSelectionChange={(key) => handleRoleChange(Array.from(key).join(", "))}
-                className="w-full"
-              >
-                <DropdownItem key="Standard User" className="text-left">
-                  Standard User
-                </DropdownItem>
-                <DropdownItem key="Admin" className="text-left">
-                  Admin
-                </DropdownItem>
-                <DropdownItem key="Support User" className="text-left">
-                  Support User
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Select
+              label="Role"
+              placeholder="Select a role"
+              items={roles}
+              selectedKeys={selectedRole}
+              onSelectionChange={handleRoleChange}
+              isRequired
+            >
+              {roles.map((role) => (
+                <SelectItem key={role.value}>{role.label}</SelectItem>
+              ))}
+            </Select>
           </div>
         </ModalBody>
         <ModalFooter>
