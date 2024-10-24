@@ -1,0 +1,32 @@
+{
+	"info": {
+		"_postman_id": "fa0d15db-6011-4481-9b8d-81dc58fbfd52",
+		"name": "Parametes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37263070"
+	},
+	"item": [
+		{
+			"name": "List parameters",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/common-parameter/api/v1/listParameters",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"common-parameter",
+						"api",
+						"v1",
+						"listParameters"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,88 @@
+[{
+  "_id": {
+    "$oid": "6719d119ba2a7c0734d6830e"
+  },
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "code": "COUNTRIES",
+  "description": "Lista de países",
+  "data": [
+    {
+      "code": "US",
+      "name": "United States"
+    },
+    {
+      "code": "MX",
+      "name": "Mexico"
+    },
+    {
+      "code": "ES",
+      "name": "Spain"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6719d119ba2a7c0734d6830f"
+  },
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "code": "STATES",
+  "description": "Lista de estados",
+  "data": [
+    {
+      "code": "CA",
+      "name": "California"
+    },
+    {
+      "code": "TX",
+      "name": "Texas"
+    },
+    {
+      "code": "NY",
+      "name": "New York"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6719d119ba2a7c0734d68310"
+  },
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "code": "ROLES",
+  "description": "Lista de roles de usuario",
+  "data": [
+    {
+      "code": "ADMIN",
+      "name": "Administrator"
+    },
+    {
+      "code": "USER",
+      "name": "Regular User"
+    },
+    {
+      "code": "MOD",
+      "name": "Moderator"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6719d1c7ac3be19e159032a0"
+  },
+  "id": "920e8400-e29b-41d4-a716-446655448528",
+  "code": "ROLES",
+  "description": "Lista de roles de usuario",
+  "data": [
+    {
+      "code": "ADMIN",
+      "name": "Administrator"
+    },
+    {
+      "code": "USER",
+      "name": "Regular User"
+    },
+    {
+      "code": "MOD",
+      "name": "Moderator"
+    }
+  ]
+}]
