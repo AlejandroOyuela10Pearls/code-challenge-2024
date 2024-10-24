@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Textarea } from "@nextui-org/react";
 import { useDispatch } from 'react-redux';
 import Icon from './Icon';
-import { clearAlert } from '../../redux-toolkit/slices/employee-payroll-onboarding/uiSlice';
+import { clearAlert } from '../../services/redux-toolkit/slices/listenerSlice';
 
 /** @type {*} */
 const alertStyles = {
@@ -89,43 +89,26 @@ const AlertBox = ({
 
   return (
     <div
-      className={`${animationClass} flex items-start justify-between rounded border ${borderColor} ${backgroundColor} gap-1 py-2 pl-4 text-left ${extraClasses}`}
+      className={`${animationClass} flex flex-row items-center justify-between rounded border ${borderColor} ${backgroundColor} gap-4 py-2 px-4 text-left ${extraClasses}`}
       onAnimationEnd={handleAnimationEnd}
+      style={{ zIndex: 999, width: "400px", minHeight: "50px" }} 
       data-testid="alert-box"
     >
-      <div className="flex items-start">
-        <Icon
-          icon="fa-solid fa-bell" 
-          className="mt-[0.125rem] text-lg"
-          aria-hidden="true"
-          data-testid="alert-box-icon"
-        />
-        {children || (
-          <Textarea
-            label="Message"
-            labelPlacement="outside"
-            placeholder="Alert message"
-            value={text}
-            className={`pl-2 bg-transparent border-none ${textClasses}`}
-            readOnly
-            minRows={1}
-            maxRows={4}
-            data-testid="message-body"
-          />
-        )}
+      {/* Icon on the left, set to black */}
+      <Icon
+        icon={`fa-solid fa-${icon}`}
+        className="text-lg text-black" // Set icon to black
+        aria-hidden="true"
+        data-testid="alert-box-icon"
+      />
+  
+      {/* Message text, set to black */}
+      <div className={`flex-grow text-black ${textClasses}`} style={{ overflow: "hidden" }}>
+        <span>{text}</span> 
       </div>
-      {showCloseButton && (
-        <button
-          onClick={handleClose}
-          className="ml-4 rounded p-1"
-          aria-label="Close alert"
-          type="button"
-        >
-          <Icon icon={['fas', 'xmark']} className="text-gray-500 text-sm" />
-        </button>
-      )}
     </div>
   );
+  
 };
 
 AlertBox.propTypes = {

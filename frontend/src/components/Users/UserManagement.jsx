@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"; 
 import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../services/redux-toolkit/slices/listenerSlice"; 
 import UserList from "./UserList";
 import Icon from "../common/Icon";
 import AddNewUserForm from "./AddNewUserForm";
@@ -9,6 +11,7 @@ const UserManagementIndex = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const dispatch = useDispatch(); 
 
   useEffect(() => {
     loadUsersList();
@@ -19,7 +22,11 @@ const UserManagementIndex = () => {
       const usersList = await fetchUsers();
       setUsers(usersList);
     } catch (error) {
-      //todo: throw alert box
+      dispatch(setAlert({
+        message: "Error loading user list.",
+        status: "error",
+        autoHide: true,
+      }));
     }
   };
 
@@ -27,14 +34,28 @@ const UserManagementIndex = () => {
     try {
       if (selectedUser) {
         await updateUser(selectedUser.id, newUser);
+        dispatch(setAlert({
+          message: "User updated successfully.",
+          status: "success",
+          autoHide: true,
+        }));
       } else {
         await createUser(newUser);
+        dispatch(setAlert({
+          message: "User created successfully.",
+          status: "success",
+          autoHide: true,
+        }));
       }
       setIsFormOpen(false);
       setSelectedUser(null);
       loadUsersList();  
     } catch (error) {
-      //todo: throw alert box
+      dispatch(setAlert({
+        message: "Error saving user.",
+        status: "error",
+        autoHide: true,
+      }));
     }
   };
 
@@ -51,13 +72,21 @@ const UserManagementIndex = () => {
   const handleToggleStatus = async (userId, isActive) => {
     try {
       console.log(`Toggling status for user: ${userId}, setting active to: ${isActive}`);
-      await toggleUserStatus(userId, isActive);  // Pass userId and the new status
-      loadUsersList();  // Reload the user list after toggling
+      await toggleUserStatus(userId, isActive);
+      dispatch(setAlert({
+        message: `User ${isActive ? "activated" : "deactivated"} successfully.`,
+        status: "success",
+        autoHide: true,
+      }));
+      loadUsersList();
     } catch (error) {
-      console.error("Error toggling user status", error);
+      dispatch(setAlert({
+        message: `Error toggling user status.`,
+        status: "error",
+        autoHide: true,
+      }));
     }
   };
-  
 
   return (
     <div style={{ padding: "20px" }} className="w-full">

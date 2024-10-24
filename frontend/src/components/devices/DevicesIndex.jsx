@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch } from "react-redux"; 
+import { setAlert } from "../../services/redux-toolkit/slices/listenerSlice"; 
 import Icon from "../common/Icon";
 import DevicesList from "./DevicesList";
 import DevicesDetails from "./DevicesDetails";
@@ -14,6 +16,8 @@ import {
 } from "../../services/devices";
 
 const DevicesIndex = () => {
+  const dispatch = useDispatch(); 
+
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [deviceFormData, setDeviceFormData] = useState(null);
   const [deleteDevice, setDeleteDevice] = useState(null);
@@ -28,45 +32,47 @@ const DevicesIndex = () => {
       const devicesList = await fetchDevices();
       setDevices(devicesList);
     } catch (error) {
-      //todo: throw alert box
+      dispatch(
+        setAlert({
+          message: "Error loading devices. Please try again.",
+          status: "error",
+          autoHide: true,
+        })
+      );
     }
   };
 
   const handleAddDevice = async (data) => {
     try {
-      console.log("data", data);
       let response;
       if (data.id === 0) {
         response = await createDevice(data);
+        dispatch(
+          setAlert({
+            message: "Device created successfully.",
+            status: "success",
+            autoHide: true,
+          })
+        );
       } else {
-        const {
-          id,
-          serialNumber,
-          brand,
-          model,
-          hardDrive,
-          ram,
-          gpu,
-          cpu,
-          notes,
-          condition,
-        } = data;
-        response = await updateDevice(id, {
-          serialNumber,
-          brand,
-          model,
-          hardDrive,
-          ram,
-          gpu,
-          cpu,
-          notes,
-          condition,
-        });
+        response = await updateDevice(data.id, data);
+        dispatch(
+          setAlert({
+            message: "Device updated successfully.",
+            status: "success",
+            autoHide: true,
+          })
+        );
       }
-      //todo: throw alert box
       loadDevicesList();
     } catch (error) {
-      //todo: throw alert box
+      dispatch(
+        setAlert({
+          message: "Error creating or updating device. Please try again.",
+          status: "error",
+          autoHide: true,
+        })
+      );
     }
   };
 
