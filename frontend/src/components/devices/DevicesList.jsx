@@ -91,10 +91,14 @@ const DevicesList = ({
     [setSelectedDevice, setDeviceFormData, setDeleteDevice]
   );
 
+  const filteredColumns = columns.filter(
+    (x) => x.uid !== "actions" || !reactiveAction
+  );
+
   return (
     <>
       <Table aria-label="Devices List" css={{ minWidth: "100%" }}>
-        <TableHeader columns={columns}>
+        <TableHeader columns={filteredColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
