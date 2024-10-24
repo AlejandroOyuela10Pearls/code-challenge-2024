@@ -77,8 +77,8 @@ const DevicesIndex = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }} className="w-full">
-      <Card style={{ width: "100%" }}>
+    <div className="w-full p-[20px]">
+      <Card className="w-full">
         <CardHeader className="flex justify-between pl-5 pb-0">
           <div className="flex gap-4 items-center">
             <Icon icon="fa-solid fa-laptop" size="xl" />

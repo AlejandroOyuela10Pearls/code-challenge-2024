@@ -3,6 +3,7 @@ import { deviceBrandImage, brandList } from "../../utils/DeviceParams";
 
 const DeviceBrandImg = ({ device, description, name, model }) => {
   const brandName = brandList.find((x) => x.key === name);
+
   return (
     <User
       avatarProps={{

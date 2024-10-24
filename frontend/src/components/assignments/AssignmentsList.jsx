@@ -1,5 +1,4 @@
-import DeviceCondition from "./DeviceCondition";
-import DeviceBrandImg from "./DeviceBrandImg";
+import moment from "moment";
 
 import {
   Table,
@@ -12,49 +11,43 @@ import {
   Spacer,
   Pagination,
 } from "@nextui-org/react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
 
 const columns = [
-  { name: "BRAND & MODEL", uid: "brandModel" },
-  { name: "SERIAL NUMBER", uid: "serialNumber" },
-  { name: "CONDITION", uid: "condition" },
+  { name: "START DATE", uid: "date" },
+  { name: "END DATE", uid: "endDate" },
+  { name: "ASSIGNED TO", uid: "assignedUser" },
+  { name: "REASON", uid: "reason" },
+  { name: "ASSIGNED BY", uid: "supportUser" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const DevicesList = ({
-  devices = [],
+const AssignmentsList = ({
+  assignments = [],
   setSelectedDevice,
   setDeviceFormData,
   setDeleteDevice,
-  reactiveAction,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
-  const paginatedDevices = devices.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   const renderCell = useCallback(
-    (device, columnKey) => {
+    (assignment, columnKey) => {
+      const renderValue = assignment[columnKey];
       switch (columnKey) {
-        case "brandModel":
+        case "date":
+        case "endDate":
           return (
-            <DeviceBrandImg
-              device={device}
-              description={device.model}
-              name={device.brand}
-              model={device.model}
-            />
+            <p className="text-bold text-sm">
+              {renderValue
+                ? moment(renderValue).format("MMMM Do YYYY, h:mm:ss a")
+                : "-"}
+            </p>
           );
-        case "serialNumber":
-          return <p className="text-bold text-sm">{device.serialNumber}</p>;
-        case "condition":
-          return <DeviceCondition device={device} />;
+        case "assignedUser":
+        case "supportUser":
+        case "reason":
+          return <p className="text-bold text-sm">{renderValue}</p>;
         case "actions":
           return (
             <div className="relative flex items-center justify-center gap-4">
@@ -85,7 +78,7 @@ const DevicesList = ({
             </div>
           );
         default:
-          return device[columnKey];
+          return renderValue;
       }
     },
     [setSelectedDevice, setDeviceFormData, setDeleteDevice]
@@ -93,7 +86,7 @@ const DevicesList = ({
 
   return (
     <>
-      <Table aria-label="Devices List" css={{ minWidth: "100%" }}>
+      <Table aria-label="Device Assignments List" css={{ minWidth: "100%" }}>
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
@@ -104,23 +97,15 @@ const DevicesList = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={paginatedDevices}>
-          {(device) => (
-            <TableRow
-              key={device.id}
-              onClick={() => (reactiveAction ? reactiveAction(device) : null)}
-              className={
-                reactiveAction
-                  ? "cursor-pointer hover:bg-slate-300 hover:underline hover:underline-offset-1"
-                  : ""
-              }
-            >
-              {filteredColumns.map((column) => (
+        <TableBody items={assignments}>
+          {(assignment) => (
+            <TableRow key={assignment.id}>
+              {columns.map((column) => (
                 <TableCell
                   key={column.uid}
                   align={column.uid === "actions" ? "center" : "start"}
                 >
-                  {renderCell(device, column.uid)}
+                  {renderCell(assignment, column.uid)}
                 </TableCell>
               ))}
             </TableRow>
@@ -128,13 +113,9 @@ const DevicesList = ({
         </TableBody>
       </Table>
       <Spacer y={1} />
-      <Pagination
-        total={Math.ceil(devices.length / itemsPerPage)}
-        initialPage={1}
-        onChange={(page) => setCurrentPage(page)}
-      />
+      <Pagination total={1} initialPage={1} />
     </>
   );
 };
 
-export default DevicesList;
+export default AssignmentsList;

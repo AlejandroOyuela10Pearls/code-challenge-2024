@@ -7,8 +7,14 @@ const UserManagement = lazy(() => import("./components/Users/UserManagement"));
 const DeviceManagement = lazy(() =>
   import("./components/devices/DevicesIndex")
 );
+const Assignments = lazy(() =>
+  import("./components/assignments/AssignmentsIndex")
+);
+const DeviceAssignments = lazy(() =>
+  import("./components/assignments/DeviceAssignmentsIndex")
+);
 const MaintenanceLog = lazy(() => import("./components/MaintenanceLog"));
-const Search = lazy(() => import("./components/Search"));
+const DeviceSearch = lazy(() => import("./components/search/SearchIndex"));
 
 const AppRoutes = ({ setGlobalLoading }) => {
   return (
@@ -33,10 +39,18 @@ const AppRoutes = ({ setGlobalLoading }) => {
         path="/logs"
         element={<MaintenanceLog setGlobalLoading={setGlobalLoading} />}
       />
-      <Route path="/assignments" element={<p>Assignments is comming</p>} />
-      <Route path="/search" 
-      element={<Search setGlobalLoading={setGlobalLoading} />}
-       />
+      <Route
+        path="/assignments"
+        element={<Assignments setGlobalLoading={setGlobalLoading} />}
+      />
+      <Route
+        path="/assignments/:id"
+        element={<DeviceAssignments setGlobalLoading={setGlobalLoading} />}
+      />
+      <Route
+        path="/search"
+        element={<DeviceSearch setGlobalLoading={setGlobalLoading} />}
+      />
     </Routes>
   );
 };

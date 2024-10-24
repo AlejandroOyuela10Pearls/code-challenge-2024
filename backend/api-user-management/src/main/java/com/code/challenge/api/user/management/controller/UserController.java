@@ -15,7 +15,6 @@ public class UserController {
 
     private final UserService service;
 
-
     public UserController(UserService service) {
         this.service = service;
     }
@@ -29,6 +28,7 @@ public class UserController {
     public Mono<?> listAll(){
         return service.listUsers();
     }
+
     @PutMapping("/update")
     public Mono<?> updateUser(
             @RequestParam("id") String id,

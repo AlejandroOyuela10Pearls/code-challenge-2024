@@ -20,6 +20,11 @@ public class DeviceManagementCotroller {
         this.service = service;
     }
 
+    @GetMapping("/get")
+    public Mono<?> getDevice(@RequestParam("id") String id) {
+        return service.getDevice(id);
+    }
+
     @PostMapping("/save")
     public Mono<?> createDevice(@RequestBody DeviceRequest request) {
         return service.saveDevice(request);
@@ -44,24 +49,24 @@ public class DeviceManagementCotroller {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-@GetMapping("/listBy")
-public Flux<?> listByFilters(
+    @GetMapping("/listBy")
+    public Flux<?> listByFilters(
         @RequestParam(value = "serialNumber", required = false) String serialNumber,
         @RequestParam(value = "brand", required = false) String brand,
         @RequestParam(value = "model", required = false) String model,
         @RequestParam(value = "searchText", required = false) String searchText) {
 
-    System.out.println("Received searchText: " + searchText);  // Add logging here
-    System.out.println("Received brand: " + brand);            // Add logging here
-    System.out.println("Received model: " + model);            // Add logging here
+        System.out.println("Received searchText: " + searchText);  // Add logging here
+        System.out.println("Received brand: " + brand);            // Add logging here
+        System.out.println("Received model: " + model);            // Add logging here
 
-    FilterDevice filterDevice = FilterDevice.builder()
-            .serialNumber(serialNumber != null ? serialNumber : "")
-            .brand(brand != null ? brand : "")
-            .model(model != null ? model : "")
-            .searchText(searchText != null ? searchText : "")
-            .build();
+        FilterDevice filterDevice = FilterDevice.builder()
+                .serialNumber(serialNumber != null ? serialNumber : "")
+                .brand(brand != null ? brand : "")
+                .model(model != null ? model : "")
+                .searchText(searchText != null ? searchText : "")
+                .build();
 
-    return service.listByFilter(filterDevice);
-}
+        return service.listByFilter(filterDevice);
+    }
 }

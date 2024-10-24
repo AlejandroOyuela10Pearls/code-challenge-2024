@@ -22,7 +22,7 @@ export default {
               foreground: "#FFFFFF",
             },
             secondary: {
-              DEFAULT: "#415F69", // secondary color
+              DEFAULT: "#9E8A7C", // secondary color
               foreground: "#FFFFFF",
             },
             overlay: {

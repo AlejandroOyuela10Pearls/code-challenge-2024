@@ -28,6 +28,10 @@ public class DeviceManagementService {
         this.deviceCustomRepository = deviceCustomRepository;
     }
 
+    public Mono<?> getDevice(String id) {
+        return repository.findById(UUID.fromString(id));
+    }
+
     public Mono<?> saveDevice(DeviceRequest request) {
         return repository.findBySerialNumber(request.getSerialNumber())
                 .flatMap(existingDevice -> Mono.error(new BusinessException("El serial number ya existe.")))
