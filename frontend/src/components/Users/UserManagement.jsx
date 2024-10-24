@@ -32,7 +32,7 @@ const UserManagementIndex = () => {
       }
       setIsFormOpen(false);
       setSelectedUser(null);
-      loadUsersList();  // Reload the user list after save
+      loadUsersList();  
     } catch (error) {
       //todo: throw alert box
     }
@@ -48,14 +48,16 @@ const UserManagementIndex = () => {
     setIsFormOpen(true);
   };
 
-  const handleToggleStatus = async (userId) => {
+  const handleToggleStatus = async (userId, isActive) => {
     try {
-      await toggleUserStatus(userId);
-      loadUsersList();
+      console.log(`Toggling status for user: ${userId}, setting active to: ${isActive}`);
+      await toggleUserStatus(userId, isActive);  // Pass userId and the new status
+      loadUsersList();  // Reload the user list after toggling
     } catch (error) {
-      //todo: throw alert box
+      console.error("Error toggling user status", error);
     }
   };
+  
 
   return (
     <div style={{ padding: "20px" }} className="w-full">

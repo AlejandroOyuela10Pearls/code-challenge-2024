@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -13,46 +13,44 @@ import {
   Spacer,
   Chip,
 } from "@nextui-org/react";
-import { maintenanceConditionTextMap, maintenanceConditionColorMap } from "../utils/MaintenanceParams";
-
-// Sample maintenance logs
-const initialLogs = [
-  {
-    id: 1,
-    date: "2024-10-01",
-    supportUser: "John Doe",
-    device: "MacBook Pro",
-    notes: "Replaced battery",
-    condition: "repaired",
-  },
-  {
-    id: 2,
-    date: "2024-09-25",
-    supportUser: "Jane Smith",
-    device: "Dell XPS 13",
-    notes: "Cleaned and reinstalled OS",
-    condition: "InMaintenance",
-  },
-  {
-    id: 3,
-    date: "2024-09-15",
-    supportUser: "John Doe",
-    device: "HP Spectre",
-    notes: "Screen replacement",
-    condition: "defective",
-  },
-];
+import { fetchMaintenances } from "../services/devices";
 
 const MaintenanceLog = () => {
-  const [logs, setLogs] = useState(initialLogs);
+  const [logs, setLogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  useEffect(() => {
+    // Fetch all maintenances on component mount
+    fetchMaintenances()
+      .then((data) => {
+        setLogs(data); // Set the maintenance logs
+      })
+      .catch((error) => {
+        console.error("Error fetching maintenance logs:", error);
+      });
+  }, []);
 
   // Calculate the displayed logs based on pagination
   const displayedLogs = logs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Determine the color of the chip based on the condition
+  const getChipColor = (condition) => {
+    const normalizedCondition = condition.toLowerCase();
+
+    if (normalizedCondition === "good" || normalizedCondition === "repaired") {
+      return "success"; // Set color as success for good or repaired
+    } else if (normalizedCondition === "inmaintenance" || normalizedCondition === "in maintenance") {
+      return "warning"; // Set color as warning for In Maintenance
+    } else if (normalizedCondition === "defective") {
+      return "danger"; // Set color as danger for defective
+    }
+
+    return "default"; // Default color if no match
+  };
 
   return (
     <div style={{ padding: "20px" }} className="w-full">
@@ -83,11 +81,11 @@ const MaintenanceLog = () => {
                   <TableCell>
                     <Chip
                       className="capitalize"
-                      color={maintenanceConditionColorMap[log.condition]}
+                      color={getChipColor(log.currentCondition)} // Set color conditionally
                       size="sm"
                       variant="flat"
                     >
-                      {maintenanceConditionTextMap[log.condition]}
+                      {log.currentCondition}
                     </Chip>
                   </TableCell>
                 </TableRow>

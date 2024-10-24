@@ -83,3 +83,23 @@ export const listByFilters = (searchText, brand, model) => {
     }
   });
 };
+export const fetchMaintenances = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const url = `${deviceApiUrl}/listAll`;
+      const response = await axios.get(url);
+
+      if (Array.isArray(response.data)) {
+        const maintenances = response.data.flatMap(device => device.maintenances || []); 
+        resolve(maintenances);
+      } else {
+        reject(response);
+      }
+    } catch (error) {
+      console.error("Error fetching maintenances:", error);
+      reject(error);
+    }
+  });
+};
+
+

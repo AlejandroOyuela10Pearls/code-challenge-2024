@@ -42,7 +42,7 @@ export const updateUser = (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
       const url = `${userApiUrl}/update?id=${id}`;
-      const response = await axios.post(url, data);
+      const response = await axios.put(url, data);  
       if (response.status === 200) {
         resolve(response);
       } else {
@@ -56,20 +56,26 @@ export const updateUser = (id, data) => {
   });
 };
 
-export const toggleUserStatus = (id) => {
+export const toggleUserStatus = (id, isActive) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const url = `${userApiUrl}/toggleStatus?id=${id}`;
-      const response = await axios.post(url);
+      if (!id) {
+        reject("User ID is undefined.");
+        return;
+      }
+      const url = `${userApiUrl}/update-status?id=${id}&isActive=${isActive}`;
+      const response = await axios.put(url);
       if (response.status === 200) {
         resolve(response);
       } else {
         reject(response);
       }
     } catch (error) {
-      const msg = "Error toggling user status";
-      console.error(msg, error);
-      reject(msg);
+      console.error("Error toggling user status", error);
+      reject(error);
     }
   });
 };
+
+
+
