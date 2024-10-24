@@ -4,20 +4,24 @@ import com.code.challenge.api.device.management.model.AssignedDevice;
 import com.code.challenge.api.device.management.model.Assignment;
 import com.code.challenge.api.device.management.model.User;
 import com.code.challenge.api.device.management.model.request.AssignmentRequest;
+import com.code.challenge.api.device.management.repository.AssignmentCustomRepository;
 import com.code.challenge.api.device.management.repository.AssignmentRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Service
 public class AssignmentService {
 
     private final  AssignmentRepository repository;
+    private final AssignmentCustomRepository customRepository;
 
-    public AssignmentService(AssignmentRepository repository) {
+    public AssignmentService(AssignmentRepository repository, AssignmentCustomRepository customRepository) {
         this.repository = repository;
+        this.customRepository = customRepository;
     }
 
     public Mono<?> assignmentDevice(AssignmentRequest request){
@@ -37,5 +41,9 @@ public class AssignmentService {
 
     public Flux<?> listAllAssignments(){
         return repository.findAll();
+    }
+
+    public Mono<?> updateAssignment(String id){
+        return customRepository.updateAssignment(UUID.fromString(id));
     }
 }

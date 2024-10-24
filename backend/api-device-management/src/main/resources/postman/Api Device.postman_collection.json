@@ -186,6 +186,43 @@
 			"response": []
 		},
 		{
+			"name": "Update end date Assignment",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"serialNumber\": \"SN90989\",\n    \"brand\": \"Mac\",\n    \"model\": \"M2\",\n    \"hardDrive\": \"1024 GB SSD\",\n    \"ram\": \"64 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/updateAssignment?id=89411d19-4341-4e8c-a880-a684051340de",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"updateAssignment"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "89411d19-4341-4e8c-a880-a684051340de"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add Maintenance",
 			"request": {
 				"method": "POST",

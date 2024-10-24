@@ -25,4 +25,11 @@ public class AssignmentController {
     public Flux<?> listAllAssignments(){
         return service.listAllAssignments();
     }
+
+    @PutMapping("/updateAssignment")
+    public Mono<?> updateAssignment(
+            @RequestParam("id") String id
+    ){
+        return service.updateAssignment(id);
+    }
 }
