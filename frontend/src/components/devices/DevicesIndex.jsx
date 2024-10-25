@@ -124,6 +124,7 @@ const DevicesIndex = () => {
                 ram: "",
                 gpu: "",
                 cpu: "",
+                status: true,
                 notes: "",
                 addedAt: "",
               })
