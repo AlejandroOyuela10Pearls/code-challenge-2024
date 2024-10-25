@@ -13,6 +13,7 @@ import {
   fetchDevices,
   createDevice,
   updateDevice,
+  deleteDevice,
 } from "../../services/devices";
 
 const DevicesIndex = () => {
@@ -20,7 +21,7 @@ const DevicesIndex = () => {
 
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [deviceFormData, setDeviceFormData] = useState(null);
-  const [deleteDevice, setDeleteDevice] = useState(null);
+  const [deleteDeviceData, setDeleteDevice] = useState(null);
   const [devices, setDevices] = useState([]);
 
   useEffect(() => {
@@ -76,6 +77,31 @@ const DevicesIndex = () => {
     }
   };
 
+  const handleDeleteDevice = async () => {
+    if (deleteDeviceData) {
+      try {
+        await deleteDevice(deleteDeviceData.id); 
+        dispatch(
+          setAlert({
+            message: "Device deleted successfully.",
+            status: "success",
+            autoHide: true,
+          })
+        );
+        setDeleteDevice(null); 
+        loadDevicesList(); 
+      } catch (error) {
+        dispatch(
+          setAlert({
+            message: "Error deleting device. Please try again.",
+            status: "error",
+            autoHide: true,
+          })
+        );
+      }
+    }
+  };
+
   return (
     <div className="w-full p-[20px]">
       <Card className="w-full">
@@ -113,7 +139,7 @@ const DevicesIndex = () => {
             devices={devices}
             setSelectedDevice={setSelectedDevice}
             setDeviceFormData={setDeviceFormData}
-            setDeleteDevice={setDeleteDevice}
+            setDeleteDevice={setDeleteDevice} 
           />
         </CardBody>
       </Card>
@@ -133,11 +159,11 @@ const DevicesIndex = () => {
         selectedDevice={deviceFormData}
       />
       <TwoButtonsModal
-        isOpen={!!deleteDevice}
+        isOpen={!!deleteDeviceData}
         onClose={() => setDeleteDevice(null)}
-        title={`Delete device ${deleteDevice?.brand} ${deleteDevice?.model}`}
-        description={`Are you sure to delete the device with Serial Number ${deleteDevice?.serialNumber}?`}
-        actionBtn={() => {}}
+        title={`Delete device ${deleteDeviceData?.brand} ${deleteDeviceData?.model}`}
+        description={`Are you sure to delete the device with Serial Number ${deleteDeviceData?.serialNumber}?`}
+        actionBtn={handleDeleteDevice}
         closeText="Cancel"
         actionText="Delete"
       />

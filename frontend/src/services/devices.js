@@ -125,3 +125,24 @@ export const fetchMaintenances = () => {
     }
   });
 };
+export const deleteDevice = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const url = `${deviceApiUrl}/delete`;
+      const response = await axios.put(url, null, {
+        params: {
+          id,
+        },
+      });
+      if (response.status === 200) {
+        resolve(response);
+      } else {
+        reject(response);
+      }
+    } catch (error) {
+      const msg = "Error deleting device";
+      console.error(msg, error);
+      reject(msg);
+    }
+  });
+};

@@ -48,7 +48,7 @@ public class DeviceManagementService {
                             .notes(request.getNotes())
                             .addedAt(new Date())
                             .condition(request.getCondition())
-                            .condition(request.getStatus())
+                            .status(request.getStatus())
                             .build();
 
                     return repository.save(deviceSave)
