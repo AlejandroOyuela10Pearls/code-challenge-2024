@@ -5,10 +5,10 @@ const deviceApiUrl = import.meta.env.VITE_DEVICE_API_URL;
 export const fetchDeviceAssignments = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const url = `${deviceApiUrl}/listAssignments`;
+      const url = `${deviceApiUrl}/listAssignmentDevice`;
       const response = await axios.get(url, {
         params: {
-          id,
+          idDevice: id,
         },
       });
       if (response.data) {

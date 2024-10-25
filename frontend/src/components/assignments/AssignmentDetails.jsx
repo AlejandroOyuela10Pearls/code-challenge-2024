@@ -12,7 +12,7 @@ import { reasonsList } from "../../utils/AssignmentsParams";
 
 const AssignmentDetails = ({ isOpen, onClose, assignment }) => {
   const targetReason = reasonsList.find((x) => x.key === assignment?.reason);
-  console.log("assignment", assignment);
+
   return (
     <Modal
       size="md"
