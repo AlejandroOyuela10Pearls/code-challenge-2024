@@ -32,7 +32,7 @@ const DevicesList = ({
   reactiveAction,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const paginatedDevices = devices.slice(
     (currentPage - 1) * itemsPerPage,
