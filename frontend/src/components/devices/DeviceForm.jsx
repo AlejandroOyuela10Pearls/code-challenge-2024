@@ -24,7 +24,7 @@ const SCHEMA = yup.object({
   model: yup.string().required("A Model is required."),
   serialNumber: yup.string().required("A Serial Number is required."),
   condition: yup.string().required("Please select a Condition."),
-  hardDrive: yup.string().required("A Hard Drive (HD) is required."),
+  hardDrive: yup.string().required("A storage is required."),
   ram: yup.string().required("A RAM value is required."),
   gpu: yup.string(),
   cpu: yup.string().required("A CPU value is required."),
@@ -172,8 +172,8 @@ const DeviceForm = ({ isOpen, onClose, selectedDevice }) => {
                 render={({ field }) => (
                   <Input
                     isRequired
-                    label="Hard Drive (HD)"
-                    placeholder="Enter Hard Drive"
+                    label="Storage (HDD/SSD)"
+                    placeholder="Enter Storage"
                     value={field.value}
                     onValueChange={field.onChange}
                     name={field.name}
