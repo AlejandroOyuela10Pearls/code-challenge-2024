@@ -2,34 +2,39 @@ import * as yup from "yup";
 
 import {
   Button,
+  DatePicker,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
   Select,
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import { brandList, statusList } from "../../utils/DeviceParams";
+import { reasonsList } from "../../utils/AssignmentsParams";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { parseDate } from "@internationalized/date";
 
 const SCHEMA = yup.object({
   date: yup.string().required("Please set the starting date."),
   assignedUserId: yup.string().required("Please the target user."),
   reason: yup.string().required("Please write a reason for the assignment."),
-  endDate: yup.string(),
+  endDate: yup.string().notRequired(),
   notes: yup.string(),
 });
 
-const AssignmentForm = ({ isOpen, onClose, selectedDevice }) => {
-  const [brandValue, setBrandValue] = useState(new Set([]));
-  const [statusValue, setStatusValue] = useState(new Set([]));
+const AssignmentForm = ({ isOpen, onClose, selectedAssignment, users }) => {
+  const [targetUserValue, setTargetUserValue] = useState(new Set([]));
+  const [reasonValue, setReasonValue] = useState(new Set([]));
+  const [initialDateValue, setInitialDateValue] = useState(null);
+  const [endDateValue, setEndDateValue] = useState(null);
 
-  const isNewDevice = Boolean(!selectedDevice || selectedDevice?.id === 0);
+  const isNewAssignment = Boolean(
+    !selectedAssignment || selectedAssignment?.id === 0
+  );
 
   const {
     control,
@@ -37,28 +42,34 @@ const AssignmentForm = ({ isOpen, onClose, selectedDevice }) => {
     reset,
     formState: { errors, isValid, isDirty },
   } = useForm({
-    defaultValues: selectedDevice,
+    defaultValues: selectedAssignment,
     mode: "all",
     resolver: yupResolver(SCHEMA),
   });
 
-  const device = getValues();
-
   const handleSubmit = (sendFormValues = false) => {
     onClose(sendFormValues ? getValues() : null);
-    setBrandValue(new Set([]));
-    setStatusValue(new Set([]));
+    setTargetUserValue(new Set([]));
+    setReasonValue(new Set([]));
+    setInitialDateValue(null);
+    setEndDateValue(null);
     reset({});
   };
 
   useEffect(() => {
-    if (selectedDevice) {
-      const { brand, condition } = selectedDevice;
-      setBrandValue(new Set([brand]));
-      setStatusValue(new Set([condition]));
-      reset(selectedDevice);
+    if (selectedAssignment) {
+      const { date, endDate, reason } = selectedAssignment;
+      if (date) {
+        setInitialDateValue(parseDate(date));
+      }
+      if (endDate) {
+        setEndDateValue(parseDate(endDate));
+      }
+      /*setTargetUserValue(new Set([brand]));
+      setReasonValue(new Set([reason]));*/
+      reset(selectedAssignment);
     }
-  }, [selectedDevice]);
+  }, [selectedAssignment]);
 
   return (
     <Modal
@@ -69,169 +80,116 @@ const AssignmentForm = ({ isOpen, onClose, selectedDevice }) => {
       onClose={() => handleSubmit()}
     >
       <ModalContent>
-        <ModalHeader>{isNewDevice ? "New Device" : "Edit Device"}</ModalHeader>
+        <ModalHeader>
+          {isNewAssignment ? "New Assignment" : "Edit Assignment"}
+        </ModalHeader>
         <ModalBody>
           <form
             onKeyDown={(e) => (e.key === "Enter" ? e.preventDefault() : null)}
             className="flex flex-col gap-4"
           >
-            <div className="grid grid-rows-4 grid-flow-col gap-4">
-              <Controller
-                control={control}
-                name="brand"
-                render={({ field }) => (
-                  <Select
-                    isRequired
-                    label="Brand"
-                    placeholder="Select a brand"
-                    items={brandList}
-                    selectedKeys={brandValue}
-                    onSelectionChange={(e) => {
-                      setBrandValue(e);
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-4">
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      isRequired
+                      label="Initial date"
+                      placeholder="Select a date"
+                      value={initialDateValue}
+                      onChange={(e) => {
+                        setInitialDateValue(e);
+                        field.onChange(e ? e.toString() : null);
+                      }}
+                      name={field.name}
+                      isInvalid={!!errors.date?.message}
+                      errorMessage={errors.date?.message}
+                    />
+                  )}
+                />
 
-                      const iterator = e.values();
-                      const selectedValue = iterator.next().value;
-                      field.onChange(selectedValue);
-                    }}
-                    isInvalid={!!errors.brand?.message}
-                    errorMessage={errors.brand?.message}
-                  >
-                    {(brand) => <SelectItem>{brand.label}</SelectItem>}
-                  </Select>
-                )}
-              />
+                <Controller
+                  control={control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <DatePicker
+                      label="End date"
+                      placeholder="Select a date (optional)"
+                      value={endDateValue}
+                      onChange={(e) => {
+                        setEndDateValue(e);
+                        field.onChange(e ? e.toString() : null);
+                      }}
+                      name={field.name}
+                      isInvalid={!!errors.endDate?.message}
+                      errorMessage={errors.endDate?.message}
+                    />
+                  )}
+                />
+              </div>
 
-              <Controller
-                control={control}
-                name="model"
-                render={({ field }) => (
-                  <Input
-                    isRequired
-                    label="Model"
-                    placeholder="Enter model"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                    isInvalid={!!errors.model?.message}
-                    errorMessage={errors.model?.message}
-                  />
-                )}
-              />
+              <div className="flex gap-4">
+                <Controller
+                  control={control}
+                  name="assignedUserId"
+                  render={({ field }) => (
+                    <Select
+                      isRequired
+                      label="User"
+                      placeholder="Select a user"
+                      items={users || []}
+                      selectedKeys={targetUserValue}
+                      onSelectionChange={(e) => {
+                        setTargetUserValue(e);
 
-              <Controller
-                control={control}
-                name="serialNumber"
-                render={({ field }) => (
-                  <Input
-                    isRequired
-                    label="Serial Number"
-                    placeholder="Enter Serial Number"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                    isInvalid={!!errors.serialNumber?.message}
-                    errorMessage={errors.serialNumber?.message}
-                  />
-                )}
-              />
+                        const iterator = e.values();
+                        const selectedValue = iterator.next().value;
+                        field.onChange(selectedValue);
+                      }}
+                      isInvalid={!!errors.assignedUserId?.message}
+                      errorMessage={errors.assignedUserId?.message}
+                    >
+                      {(user) => <SelectItem>{user.name}</SelectItem>}
+                    </Select>
+                  )}
+                />
 
-              <Controller
-                control={control}
-                name="condition"
-                render={({ field }) => (
-                  <Select
-                    isRequired
-                    label="Condition"
-                    placeholder="Select a condition"
-                    items={statusList}
-                    selectedKeys={statusValue}
-                    onSelectionChange={(e) => {
-                      setStatusValue(e);
+                <Controller
+                  control={control}
+                  name="reason"
+                  render={({ field }) => (
+                    <Select
+                      isRequired
+                      label="Reason"
+                      placeholder="Select a reason"
+                      items={reasonsList}
+                      selectedKeys={reasonValue}
+                      onSelectionChange={(e) => {
+                        setReasonValue(e);
 
-                      const iterator = e.values();
-                      const selectedValue = iterator.next().value;
-                      field.onChange(selectedValue);
-                    }}
-                    isInvalid={!!errors.condition?.message}
-                    errorMessage={errors.condition?.message}
-                  >
-                    {(status) => <SelectItem>{status.label}</SelectItem>}
-                  </Select>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="hardDrive"
-                render={({ field }) => (
-                  <Input
-                    isRequired
-                    label="Hard Drive (HD)"
-                    placeholder="Enter Hard Drive"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                    isInvalid={!!errors.hardDrive?.message}
-                    errorMessage={errors.hardDrive?.message}
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="ram"
-                render={({ field }) => (
-                  <Input
-                    isRequired
-                    label="RAM"
-                    placeholder="Enter RAM"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                    isInvalid={!!errors.ram?.message}
-                    errorMessage={errors.ram?.message}
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="cpu"
-                render={({ field }) => (
-                  <Input
-                    isRequired
-                    label="CPU"
-                    placeholder="Enter CPU"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                    isInvalid={!!errors.cpu?.message}
-                    errorMessage={errors.cpu?.message}
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="gpu"
-                render={({ field }) => (
-                  <Input
-                    label="GPU"
-                    placeholder="Enter GPU"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    name={field.name}
-                  />
-                )}
-              />
+                        const iterator = e.values();
+                        const selectedValue = iterator.next().value;
+                        field.onChange(selectedValue);
+                      }}
+                      isInvalid={!!errors.reason?.message}
+                      errorMessage={errors.reason?.message}
+                    >
+                      {(reason) => <SelectItem>{reason.label}</SelectItem>}
+                    </Select>
+                  )}
+                />
+              </div>
             </div>
+
             <Controller
               control={control}
               name="notes"
               render={({ field }) => (
                 <Textarea
                   label="Notes"
-                  placeholder="Enter your notes about the device"
+                  placeholder="Enter your notes about the assignment"
                   value={field.value}
                   onValueChange={field.onChange}
                   name={field.name}
@@ -254,7 +212,7 @@ const AssignmentForm = ({ isOpen, onClose, selectedDevice }) => {
               onPress={() => handleSubmit(true)}
               isDisabled={!isValid || !isDirty}
             >
-              {isNewDevice ? "Create" : "Edit"}
+              {isNewAssignment ? "Create" : "Edit"}
             </Button>
           </div>
         </ModalFooter>

@@ -15,21 +15,21 @@ import { useCallback } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
+import { reasonsList } from "../../utils/AssignmentsParams";
 
 const columns = [
   { name: "START DATE", uid: "date" },
   { name: "END DATE", uid: "endDate" },
   { name: "ASSIGNED TO", uid: "assignedUser" },
   { name: "REASON", uid: "reason" },
-  { name: "ASSIGNED BY", uid: "supportUser" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
 const AssignmentsList = ({
   assignments = [],
-  setSelectedDevice,
-  setDeviceFormData,
-  setDeleteDevice,
+  setSelectedAssignment,
+  setAssignmentFormData,
+  setDeleteAssignment,
 }) => {
   const renderCell = useCallback(
     (assignment, columnKey) => {
@@ -39,38 +39,38 @@ const AssignmentsList = ({
         case "endDate":
           return (
             <p className="text-bold text-sm">
-              {renderValue
-                ? moment(renderValue).format("MMMM Do YYYY, h:mm:ss a")
-                : "-"}
+              {renderValue ? moment(renderValue).format("MMMM Do YYYY") : "-"}
             </p>
           );
         case "assignedUser":
         case "supportUser":
+          return <p className="text-bold text-sm">{renderValue["nameUser"]}</p>;
         case "reason":
-          return <p className="text-bold text-sm">{renderValue}</p>;
+          const targetReason = reasonsList.find((x) => x.key === renderValue);
+          return <p className="text-bold text-sm">{targetReason.label}</p>;
         case "actions":
           return (
             <div className="relative flex items-center justify-center gap-4">
               <Tooltip content="More details">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => setSelectedDevice(device)}
+                  onClick={() => setSelectedAssignment(assignment)}
                 >
                   <EyeIcon />
                 </span>
               </Tooltip>
-              <Tooltip content="Edit device">
+              <Tooltip content="Edit assignment">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => setDeviceFormData(device)}
+                  onClick={() => setAssignmentFormData(assignment)}
                 >
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete device">
+              <Tooltip color="danger" content="Delete assignment">
                 <span
                   className="text-lg text-danger cursor-pointer active:opacity-50"
-                  onClick={() => setDeleteDevice(device)}
+                  onClick={() => setDeleteAssignment(assignment)}
                 >
                   <DeleteIcon />
                 </span>
@@ -81,7 +81,7 @@ const AssignmentsList = ({
           return renderValue;
       }
     },
-    [setSelectedDevice, setDeviceFormData, setDeleteDevice]
+    [setSelectedAssignment, setAssignmentFormData, setDeleteAssignment]
   );
 
   return (
