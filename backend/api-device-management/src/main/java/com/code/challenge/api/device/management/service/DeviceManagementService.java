@@ -106,7 +106,7 @@ public class DeviceManagementService {
     public Mono<?> deleteDevice(String id) {
         return repository.findById(UUID.fromString(id))
                 .flatMap(existingDevice -> {
-                    existingDevice.setStatus(false);
+                    existingDevice.setStatus(true);
                     // Guarda los cambios en la base de datos y devuelve ApiResponse
                     return repository.save(existingDevice)
                             .map(updatedDevice -> new ApiResponse<>("success", "Dispositivo actualizado correctamente.", updatedDevice, null));
