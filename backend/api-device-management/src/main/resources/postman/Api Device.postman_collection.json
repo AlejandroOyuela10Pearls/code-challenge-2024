@@ -113,12 +113,34 @@
 			"response": []
 		},
 		{
+			"name": "List Assignments by Device",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/listAssignments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"listAssignments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List by filter",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8086/device-management/api/v1/listBy?serialNumber=SN90989&brand&model",
+					"raw": "http://localhost:8086/device-management/api/v1/listBy?searchText=Windo",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -133,15 +155,22 @@
 					"query": [
 						{
 							"key": "serialNumber",
-							"value": "SN90989"
+							"value": "SN90989",
+							"disabled": true
+						},
+						{
+							"key": "searchText",
+							"value": "Windo"
 						},
 						{
 							"key": "brand",
-							"value": null
+							"value": null,
+							"disabled": true
 						},
 						{
 							"key": "model",
-							"value": null
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -150,6 +179,43 @@
 		},
 		{
 			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"serialNumber\": \"SN90989\",\n    \"brand\": \"Mac\",\n    \"model\": \"M2\",\n    \"hardDrive\": \"1024 GB SSD\",\n    \"ram\": \"64 GB\",\n    \"gpu\": \"NVIDIA GTX 1650\",\n    \"cpu\": \"Intel i7\",\n    \"notes\": \"New device with warranty.\",\n    \"condition\": \"Usado pero nuevo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8086/device-management/api/v1/update?id=4d9a7491-1cb7-4edd-a860-cb6d97ccdac9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"device-management",
+						"api",
+						"v1",
+						"update"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "4d9a7491-1cb7-4edd-a860-cb6d97ccdac9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete device",
 			"request": {
 				"method": "POST",
 				"header": [],

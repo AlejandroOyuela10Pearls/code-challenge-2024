@@ -48,6 +48,7 @@ public class DeviceManagementService {
                             .notes(request.getNotes())
                             .addedAt(new Date())
                             .condition(request.getCondition())
+                            .condition(request.getStatus())
                             .build();
 
                     return repository.save(deviceSave)
@@ -69,6 +70,7 @@ public class DeviceManagementService {
                     existingDevice.setCpu(request.getCpu());
                     existingDevice.setNotes(request.getNotes());
                     existingDevice.setCondition(request.getCondition());
+
 
                     // Guarda los cambios en la base de datos y devuelve ApiResponse
                     return repository.save(existingDevice)
@@ -98,5 +100,17 @@ public class DeviceManagementService {
 
     public Flux<Device> listByFilter(FilterDevice filters){
         return deviceCustomRepository.findByFilter(filters);
+    }
+
+
+    public Mono<?> deleteDevice(String id) {
+        return repository.findById(UUID.fromString(id))
+                .flatMap(existingDevice -> {
+                    existingDevice.setStatus(false);
+                    // Guarda los cambios en la base de datos y devuelve ApiResponse
+                    return repository.save(existingDevice)
+                            .map(updatedDevice -> new ApiResponse<>("success", "Dispositivo actualizado correctamente.", updatedDevice, null));
+                })
+                .switchIfEmpty(Mono.just(new ApiResponse<>("error", "Dispositivo no encontrado.", null, null))); // Devuelve error si no se encuentra
     }
 }

@@ -14,6 +14,6 @@ public class DeviceRequest {
     private String gpu;
     private String cpu;
     private String notes;
-  //  private Date addedAt;
     private String condition;
+    private String status;
 }

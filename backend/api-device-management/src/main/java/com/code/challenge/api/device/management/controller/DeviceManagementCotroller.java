@@ -69,4 +69,9 @@ public class DeviceManagementCotroller {
 
         return service.listByFilter(filterDevice);
     }
+
+    @PutMapping("/delete")
+    public Mono<?> deleteDevice( @RequestParam("id") String id) {
+        return service.deleteDevice(id);
+    }
 }
