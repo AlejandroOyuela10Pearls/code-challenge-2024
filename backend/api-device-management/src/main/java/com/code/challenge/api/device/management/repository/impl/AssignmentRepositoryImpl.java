@@ -53,4 +53,23 @@ public class AssignmentRepositoryImpl implements AssignmentCustomRepository {
         return mongoTemplate.find(query, Assignment.class);
     }
 
+    @Override
+    public Flux<Assignment> findAssignmentsOutsideDateRange(Date fecha, String idDevice) {
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("date").lte(fecha));
+
+        // Criterio para endDate: debe ser mayor o igual a la fecha, null o no existir
+        query.addCriteria(new Criteria().orOperator(
+                Criteria.where("endDate").gte(fecha),
+                Criteria.where("endDate").is(null),
+                Criteria.where("endDate").exists(false) // Para documentos donde endDate no existe
+        ));
+
+        // Criterio para el ID del dispositivo
+        query.addCriteria(Criteria.where("device.idDevice").is(idDevice));
+
+        return mongoTemplate.find(query, Assignment.class);
+    }
+
 }

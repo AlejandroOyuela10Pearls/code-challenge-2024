@@ -1,5 +1,6 @@
 package com.code.challenge.api.device.management.service;
 
+import com.code.challenge.api.device.management.exception.BusinessException;
 import com.code.challenge.api.device.management.model.AssignedDevice;
 import com.code.challenge.api.device.management.model.Assignment;
 import com.code.challenge.api.device.management.model.User;
@@ -24,19 +25,27 @@ public class AssignmentService {
         this.customRepository = customRepository;
     }
 
-    public Mono<?> assignmentDevice(AssignmentRequest request){
-        Assignment assignment = Assignment.builder()
-                .id(UUID.randomUUID())
-                .date(request.getDate())
-                .device(AssignedDevice.builder().idDevice(request.getDeviceId()).serial(request.getDeviceSerial()).build())
-                .assignedUser(User.builder().idUser(request.getAssignedUserId()).nameUser(request.getAssignedUserName()).build())
-                .supportUser(User.builder().idUser(request.getSupportUserId()).nameUser(request.getSupportUserName()).build())
-                .reason(request.getReason())
-                .notes(request.getNotes())
-                .endDate(request.getEndDate())
-                .build();
+    public Mono<?> assignmentDevice(AssignmentRequest request) {
+        return customRepository.findAssignmentsOutsideDateRange(request.getDate(), request.getDeviceId())
+                .hasElements()
+                .flatMap(hasAssignments -> {
+                    if (hasAssignments) {
+                        return Mono.error(new BusinessException("Ya existe una asignación vigente para este dispositivo."));
+                    } else {
+                        Assignment assignment = Assignment.builder()
+                                .id(UUID.randomUUID())
+                                .date(request.getDate())
+                                .device(AssignedDevice.builder().idDevice(request.getDeviceId()).serial(request.getDeviceSerial()).build())
+                                .assignedUser(User.builder().idUser(request.getAssignedUserId()).nameUser(request.getAssignedUserName()).build())
+                                .supportUser(User.builder().idUser(request.getSupportUserId()).nameUser(request.getSupportUserName()).build())
+                                .reason(request.getReason())
+                                .notes(request.getNotes())
+                                .endDate(request.getEndDate())
+                                .build();
 
-        return repository.save(assignment);
+                        return repository.save(assignment);
+                    }
+                });
     }
 
     public Flux<?> listAllAssignments(){
