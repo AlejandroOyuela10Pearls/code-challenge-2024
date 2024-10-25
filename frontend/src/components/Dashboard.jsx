@@ -67,7 +67,7 @@ const Dashboard = () => {
   const [visibleColumns, setVisibleColumns] = useState([0, 1]); 
   const [activeTab, setActiveTab] = useState("devices");
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 7;
   const isMobile = useResponsiveDesign("mobile");
 
   useEffect(() => {

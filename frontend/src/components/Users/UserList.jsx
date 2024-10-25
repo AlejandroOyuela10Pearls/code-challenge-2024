@@ -35,7 +35,7 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [actionType, setActionType] = useState(null); // 'activate' or 'deactivate'
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 7;
 
   const [visibleColumns, setVisibleColumns] = useState([0, 1]); // Keep track of the currently visible columns
   const isMobile = useResponsiveDesign("mobile");

@@ -28,7 +28,7 @@ const columns = [
 const MaintenanceLog = () => {
   const [logs, setLogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
   const [visibleColumns, setVisibleColumns] = useState([0, 1]);
   const isMobile = useResponsiveDesign("mobile");
 

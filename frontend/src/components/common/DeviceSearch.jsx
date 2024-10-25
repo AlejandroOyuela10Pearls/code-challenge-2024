@@ -58,7 +58,7 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
   const [selectedModel, setSelectedModel] = useState(new Set(["None"]));
   const [isSearchDisabled, setIsSearchDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
 
   const isMobile = useResponsiveDesign("mobile");
   const [visibleColumns, setVisibleColumns] = useState([0, 1]);
