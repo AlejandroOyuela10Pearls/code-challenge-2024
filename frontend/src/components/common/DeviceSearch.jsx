@@ -23,6 +23,7 @@ import Icon from "./Icon";
 import Fuse from "fuse.js";
 import DeviceCondition from "../devices/DeviceCondition";
 import DeviceBrandImg from "../devices/DeviceBrandImg";
+import useResponsiveDesign from "../../utils/ResponsiveDesign";
 
 const models = [
   "Omen",
@@ -52,13 +53,15 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
     brand: "None",
     model: "None",
   });
-
   const [searchResults, setSearchResults] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(new Set(["None"]));
   const [selectedModel, setSelectedModel] = useState(new Set(["None"]));
   const [isSearchDisabled, setIsSearchDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const isMobile = useResponsiveDesign("mobile");
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]);
 
   const selectedBrandValue = Array.from(selectedBrand).join(", ");
   const selectedModelValue = Array.from(selectedModel).join(", ");
@@ -145,9 +148,17 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
     );
   }, [searchParams.searchText, selectedBrandValue, selectedModelValue]);
 
-  const filteredColumns = columns.filter(
-    (x) => (x.uid !== "actions" && x.uid !== "deviceId") || !actionOnDevice
-  );
+  const handleNextColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index + 2));
+  };
+
+  const handlePrevColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index - 2));
+  };
+
+  const filteredColumns = isMobile
+    ? columns.filter((_, index) => visibleColumns.includes(index))
+    : columns;
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -192,7 +203,6 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
             </div>
             <div className="flex gap-5 justify-center items-center">
               <p>Model:</p>
-
               <Dropdown>
                 <DropdownTrigger>
                   <Button variant="bordered" className="capitalize">
@@ -215,7 +225,6 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
               </Dropdown>
             </div>
           </div>
-
           <Button
             className="w-[50%]"
             onPress={handleSearch}
@@ -228,43 +237,77 @@ const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
       </div>
 
       {searchResults.length > 0 && (
-        <Table
-          aria-label="Devices List"
-          css={{ width: "100%", textAlign: "center" }}
-        >
-          <TableHeader columns={filteredColumns}>
-            {(column) => (
-              <TableColumn
-                key={column.uid}
-                css={{ textAlign: "center", justifyContent: "center" }}
-              >
-                {column.name}
-              </TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={paginatedDevices}>
-            {(device) => (
-              <TableRow
-                key={device.id}
-                onClick={() => (actionOnDevice ? actionOnDevice(device) : null)}
-                className={
-                  actionOnDevice
-                    ? "cursor-pointer hover:bg-slate-300 hover:underline hover:underline-offset-1"
-                    : ""
-                }
-              >
-                {filteredColumns.map((column) => (
-                  <TableCell
-                    key={column.uid}
-                    css={{ textAlign: "center", justifyContent: "center" }}
-                  >
-                    {renderCell(device, column.uid)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <>
+          <Table
+            aria-label="Devices List"
+            css={{ width: "100%", textAlign: "center" }}
+          >
+            <TableHeader columns={filteredColumns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  css={{ textAlign: "center", justifyContent: "center" }}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={paginatedDevices}>
+              {(device) => (
+                <TableRow
+                  key={device.id}
+                  onClick={() =>
+                    actionOnDevice ? actionOnDevice(device) : null
+                  }
+                  className={
+                    actionOnDevice
+                      ? "cursor-pointer hover:bg-slate-300 hover:underline hover:underline-offset-1"
+                      : ""
+                  }
+                >
+                  {filteredColumns.map((column) => (
+                    <TableCell
+                      key={column.uid}
+                      css={{ textAlign: "center", justifyContent: "center" }}
+                    >
+                      {renderCell(device, column.uid)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+
+          {isMobile && (
+            <div className="flex justify-end items-center gap-4 mt-4">
+              <Icon
+                icon="fa-solid fa-arrow-left"
+                size="2x"
+                className={`cursor-pointer ${
+                  visibleColumns[0] === 0 ? "opacity-50" : ""
+                }`}
+                onClick={handlePrevColumns}
+                style={{
+                  pointerEvents: visibleColumns[0] === 0 ? "none" : "auto",
+                }}
+              />
+              <Icon
+                icon="fa-solid fa-arrow-right"
+                size="2x"
+                className={`cursor-pointer ${
+                  visibleColumns[1] >= columns.length - 1 ? "opacity-50" : ""
+                }`}
+                onClick={handleNextColumns}
+                style={{
+                  pointerEvents:
+                    visibleColumns[1] >= columns.length - 1
+                      ? "none"
+                      : "auto",
+                }}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {searchResults.length === 0 && (

@@ -16,6 +16,8 @@ import { useCallback, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
+import useResponsiveDesign from "../../utils/ResponsiveDesign";
+import Icon from "../common/Icon";
 
 const columns = [
   { name: "BRAND & MODEL", uid: "brandModel" },
@@ -33,6 +35,8 @@ const DevicesList = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]); 
+  const isMobile = useResponsiveDesign("mobile");
 
   const paginatedDevices = devices.slice(
     (currentPage - 1) * itemsPerPage,
@@ -91,9 +95,17 @@ const DevicesList = ({
     [setSelectedDevice, setDeviceFormData, setDeleteDevice]
   );
 
-  const filteredColumns = columns.filter(
-    (x) => x.uid !== "actions" || !reactiveAction
-  );
+  const handleNextColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index + 2));
+  };
+
+  const handlePrevColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index - 2));
+  };
+
+  const filteredColumns = isMobile
+    ? columns.filter((_, index) => visibleColumns.includes(index))
+    : columns;
 
   return (
     <>
@@ -132,11 +144,33 @@ const DevicesList = ({
         </TableBody>
       </Table>
       <Spacer y={1} />
+
       <Pagination
         total={Math.ceil(devices.length / itemsPerPage)}
         initialPage={1}
         onChange={(page) => setCurrentPage(page)}
       />
+
+      {isMobile && (
+          <div className="flex justify-end items-center gap-4 mt-4">
+          <Icon
+            icon="arrow-left"
+            size="2x"
+            className={`cursor-pointer ${visibleColumns[0] === 0 ? "opacity-50" : ""}`}
+            onClick={handlePrevColumns}
+            style={{ pointerEvents: visibleColumns[0] === 0 ? "none" : "auto" }}
+          />
+          <Icon
+            icon="arrow-right"
+            size="2x"
+            className={`cursor-pointer ${
+              visibleColumns[1] >= columns.length - 1 ? "opacity-50" : ""
+            }`}
+            onClick={handleNextColumns}
+            style={{ pointerEvents: visibleColumns[1] >= columns.length - 1 ? "none" : "auto" }}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -19,6 +19,8 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
+import useResponsiveDesign from "../../utils/ResponsiveDesign";
+import Icon from "../common/Icon";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -33,7 +35,10 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [actionType, setActionType] = useState(null); // 'activate' or 'deactivate'
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
+
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]); // Keep track of the currently visible columns
+  const isMobile = useResponsiveDesign("mobile");
 
   const paginatedUsers = users.slice(
     (currentPage - 1) * itemsPerPage,
@@ -93,10 +98,22 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
     [onEditUser]
   );
 
+  const handleNextColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index + 2));
+  };
+
+  const handlePrevColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index - 2));
+  };
+
+  const filteredColumns = isMobile
+    ? columns.filter((_, index) => visibleColumns.includes(index))
+    : columns;
+
   return (
     <>
       <Table aria-label="User List" css={{ minWidth: "100%" }}>
-        <TableHeader columns={columns}>
+        <TableHeader columns={filteredColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
@@ -109,7 +126,7 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
         <TableBody items={paginatedUsers}>
           {(user) => (
             <TableRow key={user.id}>
-              {columns.map((column) => (
+              {filteredColumns.map((column) => (
                 <TableCell key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
                   {renderCell(user, column.uid)}
                 </TableCell>
@@ -119,11 +136,34 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
         </TableBody>
       </Table>
       <Spacer y={1} />
+
       <Pagination
         total={Math.ceil(users.length / itemsPerPage)}
         initialPage={1}
         onChange={(page) => setCurrentPage(page)}
       />
+
+      {isMobile && (
+        <div className="flex justify-end items-center gap-4 mt-4">
+          <Icon
+            icon="arrow-left"
+            size="2x"
+            className={`cursor-pointer ${visibleColumns[0] === 0 ? "opacity-50" : ""}`}
+            onClick={handlePrevColumns}
+            style={{ pointerEvents: visibleColumns[0] === 0 ? "none" : "auto" }}
+          />
+          <Icon
+            icon="arrow-right"
+            size="2x"
+            className={`cursor-pointer ${
+              visibleColumns[1] >= columns.length - 1 ? "opacity-50" : ""
+            }`}
+            onClick={handleNextColumns}
+            style={{ pointerEvents: visibleColumns[1] >= columns.length - 1 ? "none" : "auto" }}
+          />
+        </div>
+      )}
+
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

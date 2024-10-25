@@ -1,5 +1,4 @@
 import moment from "moment";
-
 import {
   Table,
   TableHeader,
@@ -11,11 +10,13 @@ import {
   Spacer,
   Pagination,
 } from "@nextui-org/react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { EditIcon } from "../common/customIcons/EditIcon";
 import { DeleteIcon } from "../common/customIcons/DeleteIcon";
 import { EyeIcon } from "../common/customIcons/EyeIcon";
+import Icon from "../common/Icon";
 import { reasonsList } from "../../utils/AssignmentsParams";
+import useResponsiveDesign from "../../utils/ResponsiveDesign";
 
 const columns = [
   { name: "START DATE", uid: "date" },
@@ -31,6 +32,9 @@ const AssignmentsList = ({
   setAssignmentFormData,
   setDeleteAssignment,
 }) => {
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]);
+  const isMobile = useResponsiveDesign("mobile");
+
   const renderCell = useCallback(
     (assignment, columnKey) => {
       const renderValue = assignment[columnKey];
@@ -44,7 +48,7 @@ const AssignmentsList = ({
           );
         case "assignedUser":
         case "supportUser":
-          return <p className="text-bold text-sm">{renderValue["nameUser"]}</p>;
+            return <p className="text-bold text-sm">{renderValue["nameUser"]}</p>;
         case "reason":
           const targetReason = reasonsList.find((x) => x.key === renderValue);
           return <p className="text-bold text-sm">{targetReason.label}</p>;
@@ -94,10 +98,22 @@ const AssignmentsList = ({
     [setSelectedAssignment, setAssignmentFormData, setDeleteAssignment]
   );
 
+  const handleNextColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index + 2));
+  };
+
+  const handlePrevColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index - 2));
+  };
+
+  const filteredColumns = isMobile
+    ? columns.filter((_, index) => visibleColumns.includes(index))
+    : columns;
+
   return (
     <>
       <Table aria-label="Device Assignments List" css={{ minWidth: "100%" }}>
-        <TableHeader columns={columns}>
+        <TableHeader columns={filteredColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
@@ -110,7 +126,7 @@ const AssignmentsList = ({
         <TableBody items={assignments}>
           {(assignment) => (
             <TableRow key={assignment.id}>
-              {columns.map((column) => (
+              {filteredColumns.map((column) => (
                 <TableCell
                   key={column.uid}
                   align={column.uid === "actions" ? "center" : "start"}
@@ -124,6 +140,35 @@ const AssignmentsList = ({
       </Table>
       <Spacer y={1} />
       <Pagination total={1} initialPage={1} />
+
+      {isMobile && (
+        <div className="flex justify-end items-center gap-4 mt-4">
+          <Icon
+            icon="fa-solid fa-arrow-left"
+            size="2x"
+            className={`cursor-pointer ${
+              visibleColumns[0] === 0 ? "opacity-50" : ""
+            }`}
+            onClick={handlePrevColumns}
+            style={{
+              pointerEvents: visibleColumns[0] === 0 ? "none" : "auto",
+            }}
+          />
+          <Icon
+            icon="fa-solid fa-arrow-right"
+            size="2x"
+            className={`cursor-pointer ${
+              visibleColumns[1] >= columns.length - 1 ? "opacity-50" : ""
+            }`}
+            onClick={handleNextColumns}
+            style={{
+              pointerEvents:
+                visibleColumns[1] >= columns.length - 1 ? "none" : "auto",
+            }}
+          />
+        </div>
+      )}
+      <Pagination total={Math.ceil(assignments.length / 5)} initialPage={1} />
     </>
   );
 };

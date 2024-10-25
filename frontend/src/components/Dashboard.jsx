@@ -18,7 +18,8 @@ import { fetchDevices, fetchMaintenances } from "../services/devices";
 import { fetchUsers } from "../services/users";
 import moment from "moment";
 import Icon from "./common/Icon";
-import { deviceBrandImage, statusColorMap, statusTextMap } from "../utils/DeviceParams"; // Ensure correct import
+import useResponsiveDesign from "../utils/ResponsiveDesign";
+import { deviceBrandImage, statusColorMap, statusTextMap } from "../utils/DeviceParams";
 
 const deviceColumns = [
   { name: "SERIAL NUMBER", uid: "serialNumber" },
@@ -63,9 +64,11 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [logs, setLogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]); 
   const [activeTab, setActiveTab] = useState("devices");
 
   const itemsPerPage = 8;
+  const isMobile = useResponsiveDesign("mobile");
 
   useEffect(() => {
     loadDevices();
@@ -132,11 +135,11 @@ const Dashboard = () => {
         return (
           <Chip
             className="capitalize"
-            color={statusColorMap[value] || "default"} 
+            color={statusColorMap[value] || "default"}
             size="sm"
             variant="flat"
           >
-            {statusTextMap[value] || value}  
+            {statusTextMap[value] || value}
           </Chip>
         );
       }
@@ -167,15 +170,24 @@ const Dashboard = () => {
     []
   );
 
+  const handleNextColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index + 2));
+  };
+
+  const handlePrevColumns = () => {
+    setVisibleColumns((prev) => prev.map((index) => index - 2));
+  };
+
+  const filteredColumns = isMobile
+    ? deviceColumns.filter((_, index) => visibleColumns.includes(index))
+    : deviceColumns;
+
   const renderTable = (items, columns) => (
     <>
       <Table aria-label="Table" css={{ height: "auto", minWidth: "100%" }}>
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-            >
+            <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
               {column.name}
             </TableColumn>
           )}
@@ -184,10 +196,7 @@ const Dashboard = () => {
           {(item) => (
             <TableRow key={item.id}>
               {columns.map((column) => (
-                <TableCell
-                  key={column.uid}
-                  align={column.uid === "actions" ? "center" : "start"}
-                >
+                <TableCell key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
                   {renderCell(item, column.uid)}
                 </TableCell>
               ))}
@@ -196,7 +205,6 @@ const Dashboard = () => {
         </TableBody>
       </Table>
       <Spacer y={1} />
-
     </>
   );
 
@@ -206,37 +214,60 @@ const Dashboard = () => {
         <Tab key="devices" title="Devices">
           <Card>
             <CardHeader>
-            <div className="flex gap-4 items-center">
-            <Icon icon="fa-solid fa-newspaper" size="xl" />
-            <p className="text-[24px]">Latest Updates</p>
-            </div>            </CardHeader>
-            <CardBody>{renderTable(paginatedItems, deviceColumns)}</CardBody>
+              <div className="flex gap-4 items-center">
+                <Icon icon="fa-solid fa-newspaper" size="xl" />
+                <p className="text-[24px]">Latest Updates</p>
+              </div>
+            </CardHeader>
+            <CardBody>{renderTable(paginatedItems, filteredColumns)}</CardBody>
           </Card>
         </Tab>
 
         <Tab key="users" title="Users">
           <Card>
             <CardHeader>
-            <div className="flex gap-4 items-center">
-            <Icon icon="fa-solid fa-newspaper" size="xl" />
-            <p className="text-[24px]">Latest Updates</p>
-            </div>            </CardHeader>
-            <CardBody>{renderTable(paginatedItems, userColumns)}</CardBody>
+              <div className="flex gap-4 items-center">
+                <Icon icon="fa-solid fa-newspaper" size="xl" />
+                <p className="text-[24px]">Latest Updates</p>
+              </div>
+            </CardHeader>
+            <CardBody>{renderTable(paginatedItems, filteredColumns)}</CardBody>
           </Card>
         </Tab>
 
         <Tab key="maintenances" title="Maintenance Logs">
           <Card>
             <CardHeader>
-            <div className="flex gap-4 items-center">
-            <Icon icon="fa-solid fa-newspaper" size="xl" />
-            <p className="text-[24px]">Latest Updates</p>
-            </div>
+              <div className="flex gap-4 items-center">
+                <Icon icon="fa-solid fa-newspaper" size="xl" />
+                <p className="text-[24px]">Latest Updates</p>
+              </div>
             </CardHeader>
-            <CardBody>{renderTable(paginatedItems, maintenanceColumns)}</CardBody>
+            <CardBody>{renderTable(paginatedItems, filteredColumns)}</CardBody>
           </Card>
         </Tab>
       </Tabs>
+
+      {isMobile && (
+        <div className="flex justify-end items-center gap-4 mt-4">
+          <Icon
+            icon="arrow-left"
+            size="2x"
+            className={`cursor-pointer ${visibleColumns[0] === 0 ? "opacity-50" : ""}`}
+            onClick={handlePrevColumns}
+            style={{ pointerEvents: visibleColumns[0] === 0 ? "none" : "auto" }}
+          />
+          <Icon
+            icon="arrow-right"
+            size="2x"
+            className={`cursor-pointer ${
+              visibleColumns[1] >= deviceColumns.length - 1 ? "opacity-50" : ""
+            }`}
+            onClick={handleNextColumns}
+            style={{ pointerEvents: visibleColumns[1] >= deviceColumns.length - 1 ? "none" : "auto" }}
+          />
+        </div>
+      )}
     </div>
   );
 };
