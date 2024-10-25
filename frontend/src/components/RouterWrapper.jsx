@@ -18,7 +18,7 @@ const RouterWrapper = ({ globalLoading, children }) => {
 
   useEffect(() => {
     if (user) {
-      //checkUser();
+      checkUser();
     }
   }, [user]);
 
@@ -27,7 +27,8 @@ const RouterWrapper = ({ globalLoading, children }) => {
     try {
       const usersList = await fetchUsers();
       const targetUser = usersList.find(
-        (x) => x.email === email && x.role === "Support User"
+        (x) =>
+          x.email === email && (x.role === "Support User" || x.role === "Admin")
       );
       if (targetUser) {
         dispatch(setUser(targetUser));
