@@ -59,7 +59,7 @@ const UserList = ({ users = [], onEditUser, onToggleStatus }) => {
         case "name":
           return <User name={user.name} description={user.email} />;
         case "email":
-          return <p className="text-bold text-sm capitalize">{user.email}</p>;
+          return <p className="text-bold text-sm">{user.email}</p>;
         case "role":
           return <p className="text-bold text-sm capitalize">{user.role}</p>;
         case "status":
