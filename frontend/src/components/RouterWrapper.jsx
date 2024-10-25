@@ -18,7 +18,7 @@ const RouterWrapper = ({ globalLoading, children }) => {
 
   useEffect(() => {
     if (user) {
-      checkUser();
+      //checkUser();
     }
   }, [user]);
 
