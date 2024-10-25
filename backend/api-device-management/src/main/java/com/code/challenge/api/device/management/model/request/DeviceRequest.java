@@ -15,5 +15,5 @@ public class DeviceRequest {
     private String cpu;
     private String notes;
     private String condition;
-    private boolean status;
+    private Boolean status;
 }
