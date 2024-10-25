@@ -33,4 +33,9 @@ public class AssignmentController {
     ){
         return service.updateAssignment(id);
     }
+
+    @GetMapping("/listAssignmentDevice")
+    public Flux<?> listAssignmentDevice(@RequestParam("idDevice") String idDevice){
+        return service.findByIdDevice(idDevice);
+    }
 }

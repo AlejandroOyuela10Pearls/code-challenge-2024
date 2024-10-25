@@ -29,5 +29,6 @@ public class Device {
     private String notes;            // Additional information about the device
     private Date addedAt;            // Date the device was added to the system
     private String condition;         // Current condition of the device (e.g., new, used, under repair)
+    private boolean status;
     private List<Maintenance> maintenances;
 }

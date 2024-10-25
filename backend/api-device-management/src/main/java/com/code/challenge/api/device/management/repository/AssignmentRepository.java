@@ -7,5 +7,4 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 @Component
 public interface AssignmentRepository extends ReactiveMongoRepository<Assignment, UUID> {
-
 }
