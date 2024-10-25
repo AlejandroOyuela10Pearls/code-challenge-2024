@@ -46,7 +46,7 @@ const columns = [
   { name: "DEVICE ID", uid: "deviceId" },
 ];
 
-const DeviceSearch = ({ setGlobalLoading, className }) => {
+const DeviceSearch = ({ setGlobalLoading, className, actionOnDevice }) => {
   const [searchParams, setSearchParams] = useState({
     searchText: "",
     brand: "None",
@@ -107,36 +107,33 @@ const DeviceSearch = ({ setGlobalLoading, className }) => {
     currentPage * itemsPerPage
   );
 
-  const renderCell = useCallback(
-    (device, columnKey) => {
-      switch (columnKey) {
-        case "brandModel":
-          return (
-            <DeviceBrandImg
-              device={device}
-              description={device.model}
-              name={device.brand}
-              model={device.model}
-            />
-          );
-        case "serialNumber":
-          return <p className="text-bold text-sm">{device.serialNumber}</p>;
-        case "condition":
-          return <DeviceCondition device={device} />;
-        case "deviceId":
-          return (
-            <Tooltip content={device.id}>
-              <p className="text-gray-500 text-sm">
-                {device.id > 10 ? `${device.id.slice(0, 10)}...` : device.id}
-              </p>
-            </Tooltip>
-          );
-        default:
-          return device[columnKey];
-      }
-    },
-    []
-  );
+  const renderCell = useCallback((device, columnKey) => {
+    switch (columnKey) {
+      case "brandModel":
+        return (
+          <DeviceBrandImg
+            device={device}
+            description={device.model}
+            name={device.brand}
+            model={device.model}
+          />
+        );
+      case "serialNumber":
+        return <p className="text-bold text-sm">{device.serialNumber}</p>;
+      case "condition":
+        return <DeviceCondition device={device} />;
+      case "deviceId":
+        return (
+          <Tooltip content={device.id}>
+            <p className="text-gray-500 text-sm">
+              {device.id > 10 ? `${device.id.slice(0, 10)}...` : device.id}
+            </p>
+          </Tooltip>
+        );
+      default:
+        return device[columnKey];
+    }
+  }, []);
 
   useEffect(() => {
     const isSearchTextValid = searchParams.searchText.trim() !== "";
@@ -147,6 +144,10 @@ const DeviceSearch = ({ setGlobalLoading, className }) => {
       !isSearchTextValid && !isBrandSelected && !isModelSelected
     );
   }, [searchParams.searchText, selectedBrandValue, selectedModelValue]);
+
+  const filteredColumns = columns.filter(
+    (x) => (x.uid !== "actions" && x.uid !== "deviceId") || !actionOnDevice
+  );
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -227,33 +228,43 @@ const DeviceSearch = ({ setGlobalLoading, className }) => {
       </div>
 
       {searchResults.length > 0 && (
-     <Table aria-label="Devices List" css={{ width: "100%", textAlign: "center" }}>
-     <TableHeader columns={columns}>
-       {(column) => (
-         <TableColumn
-           key={column.uid}
-           css={{ textAlign: "center", justifyContent: "center" }}
-         >
-           {column.name}
-         </TableColumn>
-       )}
-     </TableHeader>
-     <TableBody items={paginatedDevices}>
-       {(device) => (
-         <TableRow key={device.id}>
-           {columns.map((column) => (
-             <TableCell
-               key={column.uid}
-               css={{ textAlign: "center", justifyContent: "center" }}
-             >
-               {renderCell(device, column.uid)}
-             </TableCell>
-           ))}
-         </TableRow>
-       )}
-     </TableBody>
-   </Table>
-   
+        <Table
+          aria-label="Devices List"
+          css={{ width: "100%", textAlign: "center" }}
+        >
+          <TableHeader columns={filteredColumns}>
+            {(column) => (
+              <TableColumn
+                key={column.uid}
+                css={{ textAlign: "center", justifyContent: "center" }}
+              >
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={paginatedDevices}>
+            {(device) => (
+              <TableRow
+                key={device.id}
+                onClick={() => (actionOnDevice ? actionOnDevice(device) : null)}
+                className={
+                  actionOnDevice
+                    ? "cursor-pointer hover:bg-slate-300 hover:underline hover:underline-offset-1"
+                    : ""
+                }
+              >
+                {filteredColumns.map((column) => (
+                  <TableCell
+                    key={column.uid}
+                    css={{ textAlign: "center", justifyContent: "center" }}
+                  >
+                    {renderCell(device, column.uid)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       )}
 
       {searchResults.length === 0 && (
