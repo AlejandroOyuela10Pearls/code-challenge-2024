@@ -1,4 +1,5 @@
 {
   "domain": "dev-p2p4qyvgr4qsehjf.us.auth0.com",
-  "clientId": "rrW8jrwRlAVGnFpS96RyYWD4rMNBqTk0"
+  "clientId": "rrW8jrwRlAVGnFpS96RyYWD4rMNBqTk0",
+  "redirect_uri": "https://code-challenge-2024.vercel.app/callback"
 }
