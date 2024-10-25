@@ -31,7 +31,8 @@ const DevicesIndex = () => {
   const loadDevicesList = async () => {
     try {
       const devicesList = await fetchDevices();
-      setDevices(devicesList);
+      const filteredDevices = devicesList.filter(device => device.status === false); 
+      setDevices(filteredDevices);
     } catch (error) {
       dispatch(
         setAlert({
@@ -42,6 +43,7 @@ const DevicesIndex = () => {
       );
     }
   };
+  
 
   const handleAddDevice = async (data) => {
     try {
