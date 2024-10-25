@@ -64,7 +64,7 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [logs, setLogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [visibleColumns, setVisibleColumns] = useState([0, 1]); 
+  const [visibleColumns, setVisibleColumns] = useState([0, 1]);
   const [activeTab, setActiveTab] = useState("devices");
 
   const itemsPerPage = 7;
@@ -179,8 +179,9 @@ const Dashboard = () => {
   };
 
   const filteredColumns = isMobile
-    ? deviceColumns.filter((_, index) => visibleColumns.includes(index))
-    : deviceColumns;
+    ? (activeTab === "devices" ? deviceColumns : activeTab === "users" ? userColumns : maintenanceColumns)
+        .filter((_, index) => visibleColumns.includes(index))
+    : activeTab === "devices" ? deviceColumns : activeTab === "users" ? userColumns : maintenanceColumns;
 
   const renderTable = (items, columns) => (
     <>
