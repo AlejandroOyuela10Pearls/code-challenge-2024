@@ -43,8 +43,8 @@ public class AssignmentService {
         return repository.findAll();
     }
 
-    public Mono<?> updateAssignment(String id){
-        return customRepository.updateAssignment(UUID.fromString(id));
+    public Mono<?> updateAssignment(String id, AssignmentRequest request){
+        return customRepository.updateAssignment(UUID.fromString(id), request);
     }
 
     public Flux<?> findByIdDevice(String idDevice){

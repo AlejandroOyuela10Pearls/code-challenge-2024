@@ -98,8 +98,6 @@ const DeviceAssignmentsIndex = () => {
     }
   }, [params]);
 
-  const brandName = brandList.find((x) => x.key === device?.brand);
-
   const mapAssignmentFormData = (formData) => {
     const { date, id, assignedUserId, reason, notes, endDate } = formData;
     const { id: deviceId, serialNumber } = device;
@@ -124,12 +122,11 @@ const DeviceAssignmentsIndex = () => {
 
   const handleAddAssignment = async (data) => {
     const parsedData = mapAssignmentFormData(data);
-    console.log("parsedData", parsedData);
+    const isCreateRequest = parsedData.id === 0;
     try {
-      let response;
-      if (parsedData.id === 0) {
+      if (isCreateRequest) {
         delete parsedData.id;
-        response = await createAssignment(parsedData);
+        await createAssignment(parsedData);
         dispatch(
           setAlert({
             message: "Device Successfully Assigned.",
@@ -138,26 +135,48 @@ const DeviceAssignmentsIndex = () => {
           })
         );
       } else {
-        /*response = await updateAssignment(parsedData.id, data);
+        await updateAssignment(parsedData.id, parsedData);
         dispatch(
           setAlert({
-            message: "Device updated successfully.",
+            message: "Assignment updated successfully.",
             status: "success",
             autoHide: true,
           })
-        );*/
+        );
       }
-      loadDeviceAssignments();
+      loadDeviceAssignments(params.id);
     } catch (error) {
       dispatch(
         setAlert({
-          message: "Error creating or updating assignment. Please try again.",
+          message: `Error ${
+            isCreateRequest ? "creating" : "updating"
+          } assignment. Please try again.`,
           status: "error",
           autoHide: true,
         })
       );
     }
   };
+
+  const parseAndSetAssignmentFormData = (assignment) => {
+    const parsedDate = assignment["date"].split("T")[0];
+    const parsedEndDate = assignment["endDate"]
+      ? assignment["endDate"].split("T")[0]
+      : null;
+    setAssignmentFormData({
+      ...assignment,
+      date: parsedDate,
+      endDate: parsedEndDate,
+    });
+  };
+
+  const endActiveAssignment = () => {
+    const activeAssignment = assignments.find((x) => !x.endDate);
+    parseAndSetAssignmentFormData(activeAssignment);
+  };
+
+  const brandName = brandList.find((x) => x.key === device?.brand);
+  const hasOpenAssignment = !assignments.endDate;
 
   return (
     <div className="w-full p-[20px] h-full">
@@ -167,23 +186,34 @@ const DeviceAssignmentsIndex = () => {
             <Icon icon="fa-solid fa-house-laptop" size="xl" />
             <p className="text-[24px]">Assignments</p>
           </div>
-          <Button
-            auto
-            color="primary"
-            onPress={() =>
-              setAssignmentFormData({
-                id: 0,
-                date: new Date().toISOString().split("T")[0],
-                assignedUserId: "",
-                reason: "",
-                endDate: "",
-                notes: "",
-              })
-            }
-            style={{ borderRadius: "10px" }}
-          >
-            Set New Assignment
-          </Button>
+          {hasOpenAssignment ? (
+            <Button
+              auto
+              color="warning"
+              onPress={() => endActiveAssignment()}
+              style={{ borderRadius: "10px" }}
+            >
+              End Active Assignment
+            </Button>
+          ) : (
+            <Button
+              auto
+              color="primary"
+              onPress={() =>
+                setAssignmentFormData({
+                  id: 0,
+                  date: new Date().toISOString().split("T")[0],
+                  assignedUserId: "",
+                  reason: "",
+                  endDate: "",
+                  notes: "",
+                })
+              }
+              style={{ borderRadius: "10px" }}
+            >
+              Set New Assignment
+            </Button>
+          )}
         </CardHeader>
 
         <CardBody className="flex flex-col w-full h-full gap-5">
@@ -228,7 +258,7 @@ const DeviceAssignmentsIndex = () => {
           </div>
           <AssignmentsList
             assignments={assignments}
-            setAssignmentFormData={setAssignmentFormData}
+            setAssignmentFormData={parseAndSetAssignmentFormData}
             setSelectedAssignment={setSelectedAssignment}
             setDeleteAssignment={setDeleteAssignment}
           />

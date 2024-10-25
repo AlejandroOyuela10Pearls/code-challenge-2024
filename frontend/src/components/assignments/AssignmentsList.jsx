@@ -49,6 +49,10 @@ const AssignmentsList = ({
           const targetReason = reasonsList.find((x) => x.key === renderValue);
           return <p className="text-bold text-sm">{targetReason.label}</p>;
         case "actions":
+          const parsedDate = assignment["date"].split("T")[0];
+          const parsedEndDate = assignment["endDate"]
+            ? assignment["endDate"].split("T")[0]
+            : null;
           return (
             <div className="relative flex items-center justify-center gap-4">
               <Tooltip content="More details">
@@ -62,7 +66,13 @@ const AssignmentsList = ({
               <Tooltip content="Edit assignment">
                 <span
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                  onClick={() => setAssignmentFormData(assignment)}
+                  onClick={() =>
+                    setAssignmentFormData({
+                      ...assignment,
+                      date: parsedDate,
+                      endDate: parsedEndDate,
+                    })
+                  }
                 >
                   <EditIcon />
                 </span>

@@ -29,9 +29,10 @@ public class AssignmentController {
 
     @PutMapping("/updateAssignment")
     public Mono<?> updateAssignment(
-            @RequestParam("id") String id
+            @RequestParam("id") String id,
+            @RequestBody AssignmentRequest request
     ){
-        return service.updateAssignment(id);
+        return service.updateAssignment(id, request);
     }
 
     @GetMapping("/listAssignmentDevice")

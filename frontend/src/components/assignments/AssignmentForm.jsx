@@ -42,7 +42,12 @@ const AssignmentForm = ({ isOpen, onClose, selectedAssignment, users }) => {
     reset,
     formState: { errors, isValid, isDirty },
   } = useForm({
-    defaultValues: selectedAssignment,
+    defaultValues: {
+      ...selectedAssignment,
+      assignedUserId: isNewAssignment
+        ? selectedAssignment?.assignedUserId
+        : selectedAssignment?.assignedUser?.idUser,
+    },
     mode: "all",
     resolver: yupResolver(SCHEMA),
   });
@@ -58,16 +63,25 @@ const AssignmentForm = ({ isOpen, onClose, selectedAssignment, users }) => {
 
   useEffect(() => {
     if (selectedAssignment) {
-      const { date, endDate, reason } = selectedAssignment;
+      const { date, endDate, reason, assignedUser } = selectedAssignment;
       if (date) {
         setInitialDateValue(parseDate(date));
       }
       if (endDate) {
         setEndDateValue(parseDate(endDate));
       }
-      /*setTargetUserValue(new Set([brand]));
-      setReasonValue(new Set([reason]));*/
-      reset(selectedAssignment);
+      if (assignedUser) {
+        setTargetUserValue(new Set([assignedUser.idUser]));
+      }
+      if (reason) {
+        setReasonValue(new Set([reason]));
+      }
+      reset({
+        ...selectedAssignment,
+        assignedUserId: isNewAssignment
+          ? selectedAssignment?.assignedUserId
+          : selectedAssignment?.assignedUser?.idUser,
+      });
     }
   }, [selectedAssignment]);
 
@@ -117,6 +131,7 @@ const AssignmentForm = ({ isOpen, onClose, selectedAssignment, users }) => {
                     <DatePicker
                       label="End date"
                       placeholder="Select a date (optional)"
+                      minValue={initialDateValue}
                       value={endDateValue}
                       onChange={(e) => {
                         setEndDateValue(e);
@@ -212,7 +227,7 @@ const AssignmentForm = ({ isOpen, onClose, selectedAssignment, users }) => {
               onPress={() => handleSubmit(true)}
               isDisabled={!isValid || !isDirty}
             >
-              {isNewAssignment ? "Create" : "Edit"}
+              {isNewAssignment ? "Create" : "Save"}
             </Button>
           </div>
         </ModalFooter>
