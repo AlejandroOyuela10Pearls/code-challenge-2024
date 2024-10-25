@@ -13,6 +13,7 @@ import {
   Spacer,
   Chip,
 } from "@nextui-org/react";
+import Icon from "./common/Icon";
 import { fetchMaintenances } from "../services/devices";
 
 const MaintenanceLog = () => {
@@ -30,20 +31,14 @@ const MaintenanceLog = () => {
       });
   }, []);
 
-  const displayedLogs = logs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const displayedLogs = logs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const getChipColor = (condition) => {
     const normalizedCondition = condition.toLowerCase();
 
     if (normalizedCondition === "good" || normalizedCondition === "repaired") {
       return "success";
-    } else if (
-      normalizedCondition === "inmaintenance" ||
-      normalizedCondition === "in maintenance"
-    ) {
+    } else if (normalizedCondition === "inmaintenance" || normalizedCondition === "in maintenance") {
       return "warning";
     } else if (normalizedCondition === "defective") {
       return "danger";
@@ -56,20 +51,18 @@ const MaintenanceLog = () => {
     <div style={{ padding: "20px" }} className="w-full">
       <Card style={{ width: "100%" }}>
         <CardHeader>
-          <h3>Maintenance Log</h3>
+          <Icon icon="fa-solid fa-screwdriver-wrench" size="lg" className="w-[25px]" />
+          <p className="text-[24px]">Maintenance Log</p>
         </CardHeader>
 
         <CardBody>
-          <Table
-            aria-label="Maintenance Log"
-            css={{ height: "auto", minWidth: "100%" }}
-          >
+          <Table aria-label="Maintenance Log" css={{ height: "auto", minWidth: "100%" }}>
             <TableHeader>
-              <TableColumn>Date (YYYY/MM/DD)</TableColumn>
-              <TableColumn>Support User</TableColumn>
-              <TableColumn>Device</TableColumn>
-              <TableColumn>Notes</TableColumn>
-              <TableColumn>Condition</TableColumn>
+              <TableColumn>DATE (YYYY/MM/DD)</TableColumn>
+              <TableColumn>SUPPORT USER</TableColumn>
+              <TableColumn>DEVICE</TableColumn>
+              <TableColumn>NOTES</TableColumn>
+              <TableColumn>CONDITION</TableColumn>
             </TableHeader>
             <TableBody items={displayedLogs}>
               {displayedLogs.map((log) => (
@@ -79,12 +72,7 @@ const MaintenanceLog = () => {
                   <TableCell>{log.device}</TableCell>
                   <TableCell>{log.notes}</TableCell>
                   <TableCell>
-                    <Chip
-                      className="capitalize"
-                      color={getChipColor(log.currentCondition)}
-                      size="sm"
-                      variant="flat"
-                    >
+                    <Chip className="capitalize" color={getChipColor(log.currentCondition)} size="sm" variant="flat">
                       {log.currentCondition}
                     </Chip>
                   </TableCell>
@@ -93,12 +81,7 @@ const MaintenanceLog = () => {
             </TableBody>
           </Table>
           <Spacer y={1} />
-          <Pagination
-            total={Math.ceil(logs.length / itemsPerPage)}
-            initialPage={1}
-            onChange={(page) => setCurrentPage(page)}
-            page={currentPage}
-          />
+          <Pagination total={Math.ceil(logs.length / itemsPerPage)} initialPage={1} onChange={(page) => setCurrentPage(page)} page={currentPage} />
         </CardBody>
       </Card>
     </div>

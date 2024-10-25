@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Tabs,
   Tab,
@@ -11,12 +11,52 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Pagination,
   Spacer,
   Chip,
 } from "@nextui-org/react";
 import { fetchDevices, fetchMaintenances } from "../services/devices";
 import { fetchUsers } from "../services/users";
+import moment from "moment";
+import Icon from "./common/Icon";
+import { deviceBrandImage, statusColorMap, statusTextMap } from "../utils/DeviceParams"; // Ensure correct import
+
+const deviceColumns = [
+  { name: "SERIAL NUMBER", uid: "serialNumber" },
+  { name: "BRAND", uid: "brand" },
+  { name: "MODEL", uid: "model" },
+  { name: "CONDITION", uid: "condition" },
+];
+
+const userColumns = [
+  { name: "NAME", uid: "name" },
+  { name: "EMAIL", uid: "email" },
+  { name: "ROLE", uid: "role" },
+  { name: "STATUS", uid: "active" },
+];
+
+const maintenanceColumns = [
+  { name: "DATE (YYYY/MM/DD)", uid: "date" },
+  { name: "SUPPORT USER", uid: "supportUser" },
+  { name: "DEVICE", uid: "device" },
+  { name: "CONDITION", uid: "currentCondition" },
+];
+
+const getChipColor = (condition) => {
+  const normalizedCondition = condition?.toLowerCase();
+
+  if (normalizedCondition === "good" || normalizedCondition === "repaired") {
+    return "success";
+  } else if (
+    normalizedCondition === "inmaintenance" ||
+    normalizedCondition === "in maintenance"
+  ) {
+    return "warning";
+  } else if (normalizedCondition === "defective") {
+    return "danger";
+  }
+
+  return "default";
+};
 
 const Dashboard = () => {
   const [devices, setDevices] = useState([]);
@@ -25,7 +65,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("devices");
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     loadDevices();
@@ -74,123 +114,89 @@ const Dashboard = () => {
       ? users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
       : logs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const getChipColor = (condition) => {
-    if (!condition) {
-      return "default"; 
-    }
+  const renderCell = useCallback(
+    (item, columnKey) => {
+      const value = item[columnKey];
 
-    const normalizedCondition = condition.toLowerCase();
+      if (columnKey === "brand") {
+        const logo = deviceBrandImage(item);
+        return (
+          <div className="flex items-center gap-2">
+            {logo && <img src={logo} alt={value} style={{ width: "30px", height: "auto" }} />}
+            <span>{value}</span>
+          </div>
+        );
+      }
 
-    if (normalizedCondition === "good" || normalizedCondition === "repaired") {
-      return "success";
-    } else if (
-      normalizedCondition === "inmaintenance" ||
-      normalizedCondition === "in maintenance"
-    ) {
-      return "warning";
-    } else if (normalizedCondition === "defective") {
-      return "danger";
-    }
+      if (columnKey === "condition") {
+        return (
+          <Chip
+            className="capitalize"
+            color={statusColorMap[value] || "default"} 
+            size="sm"
+            variant="flat"
+          >
+            {statusTextMap[value] || value}  
+          </Chip>
+        );
+      }
 
-    return "default"; 
-  };
+      if (columnKey === "currentCondition") {
+        return (
+          <Chip
+            className="capitalize"
+            color={getChipColor(value)}
+            size="sm"
+            variant="flat"
+          >
+            {value}
+          </Chip>
+        );
+      }
 
-  const renderDeviceTable = () => (
-    <>
-      <Table aria-label="Device List" css={{ height: "auto", minWidth: "100%" }}>
-        <TableHeader>
-          <TableColumn align="center">Serial Number</TableColumn>
-          <TableColumn align="center">Brand</TableColumn>
-          <TableColumn align="center">Model</TableColumn>
-          <TableColumn align="center">Condition</TableColumn>
-        </TableHeader>
-        <TableBody items={paginatedItems}>
-          {paginatedItems.map((device) => (
-            <TableRow key={device.id}>
-              <TableCell align="center">{device.serialNumber}</TableCell>
-              <TableCell align="center">{device.brand}</TableCell>
-              <TableCell align="center">{device.model}</TableCell>
-              <TableCell align="center">{device.condition}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Spacer y={1} />
-      <Pagination
-        total={Math.ceil(totalItems / itemsPerPage)}
-        initialPage={1}
-        page={currentPage}
-        onChange={(page) => setCurrentPage(page)}
-      />
-    </>
+      if (columnKey === "active") {
+        return value ? "Active" : "Inactive";
+      }
+
+      if (columnKey === "date") {
+        return moment(value).format("YYYY/MM/DD");
+      }
+
+      return value;
+    },
+    []
   );
 
-  const renderUserTable = () => (
+  const renderTable = (items, columns) => (
     <>
-      <Table aria-label="User List" css={{ height: "auto", minWidth: "100%" }}>
-        <TableHeader>
-          <TableColumn align="center">Name</TableColumn>
-          <TableColumn align="center">Email</TableColumn>
-          <TableColumn align="center">Role</TableColumn>
-          <TableColumn align="center">Status</TableColumn>
+      <Table aria-label="Table" css={{ height: "auto", minWidth: "100%" }}>
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+            >
+              {column.name}
+            </TableColumn>
+          )}
         </TableHeader>
-        <TableBody items={paginatedItems}>
-          {paginatedItems.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell align="center">{user.name}</TableCell>
-              <TableCell align="center">{user.email}</TableCell>
-              <TableCell align="center">{user.role}</TableCell>
-              <TableCell align="center">{user.active ? "Active" : "Inactive"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Spacer y={1} />
-      <Pagination
-        total={Math.ceil(totalItems / itemsPerPage)}
-        initialPage={1}
-        page={currentPage}
-        onChange={(page) => setCurrentPage(page)}
-      />
-    </>
-  );
-
-  const renderMaintenanceTable = () => (
-    <>
-      <Table aria-label="Maintenance Log" css={{ height: "auto", minWidth: "100%" }}>
-        <TableHeader>
-          <TableColumn align="center">Date (YYYY/MM/DD)</TableColumn>
-          <TableColumn align="center">Support User</TableColumn>
-          <TableColumn align="center">Device</TableColumn>
-          <TableColumn align="center">Condition</TableColumn>
-        </TableHeader>
-        <TableBody items={paginatedItems}>
-          {paginatedItems.map((log) => (
-            <TableRow key={log.id}>
-              <TableCell align="center">{log.date}</TableCell>
-              <TableCell align="center">{log.supportUser}</TableCell>
-              <TableCell align="center">{log.device}</TableCell>
-              <TableCell align="center">
-                <Chip
-                  className="capitalize"
-                  color={getChipColor(log.currentCondition)}
-                  size="sm"
-                  variant="flat"
+        <TableBody items={items}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
                 >
-                  {log.currentCondition}
-                </Chip>
-              </TableCell>
+                  {renderCell(item, column.uid)}
+                </TableCell>
+              ))}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
       <Spacer y={1} />
-      <Pagination
-        total={Math.ceil(totalItems / itemsPerPage)}
-        initialPage={1}
-        page={currentPage}
-        onChange={(page) => setCurrentPage(page)}
-      />
+
     </>
   );
 
@@ -200,27 +206,34 @@ const Dashboard = () => {
         <Tab key="devices" title="Devices">
           <Card>
             <CardHeader>
-              <h3>Device Overview</h3>
-            </CardHeader>
-            <CardBody>{renderDeviceTable()}</CardBody>
+            <div className="flex gap-4 items-center">
+            <Icon icon="fa-solid fa-newspaper" size="xl" />
+            <p className="text-[24px]">Latest Updates</p>
+            </div>            </CardHeader>
+            <CardBody>{renderTable(paginatedItems, deviceColumns)}</CardBody>
           </Card>
         </Tab>
 
         <Tab key="users" title="Users">
           <Card>
             <CardHeader>
-              <h3>User Overview</h3>
-            </CardHeader>
-            <CardBody>{renderUserTable()}</CardBody>
+            <div className="flex gap-4 items-center">
+            <Icon icon="fa-solid fa-newspaper" size="xl" />
+            <p className="text-[24px]">Latest Updates</p>
+            </div>            </CardHeader>
+            <CardBody>{renderTable(paginatedItems, userColumns)}</CardBody>
           </Card>
         </Tab>
 
         <Tab key="maintenances" title="Maintenance Logs">
           <Card>
             <CardHeader>
-              <h3>Maintenance Log Overview</h3>
+            <div className="flex gap-4 items-center">
+            <Icon icon="fa-solid fa-newspaper" size="xl" />
+            <p className="text-[24px]">Latest Updates</p>
+            </div>
             </CardHeader>
-            <CardBody>{renderMaintenanceTable()}</CardBody>
+            <CardBody>{renderTable(paginatedItems, maintenanceColumns)}</CardBody>
           </Card>
         </Tab>
       </Tabs>
