@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_USER_API_URL=http://localhost:8087/user-management/api/v1
+      - VITE_DEVICE_API_URL=http://localhost:8086/device-management/api/v1
+    depends_on:
+      - api-user-management
+      - api-device-management
+
+  api-user-management:
+    build:
+      context: ./backend/api-user-management
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/codeChallenge
+      - SERVER_PORT=8087
+    depends_on:
+      - mongo
+    restart: on-failure
+
+  api-device-management:
+    build:
+      context: ./backend/api-device-management
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/codeChallenge
+      - SERVER_PORT=8086
+    depends_on:
+      - mongo
+    restart: on-failure
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data/mongo_backup:/data/db
+    command: ["mongod", "--bind_ip_all"]
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
+
+volumes:
+  mongo-data:
